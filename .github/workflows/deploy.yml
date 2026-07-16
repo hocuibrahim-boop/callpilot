@@ -59,22 +59,23 @@ jobs:
         run: |
           ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
             "cd /var/www/callpilot && \
-            composer install --no-dev --optimize-autoloader --no-interaction && \
+            composer install --no-dev --optimize-autoloader --no-interaction 2>&1 | tail -3 && \
             [ ! -f .env ] && cp .env.example .env || true && \
             grep -q '^APP_KEY=base64' .env || php artisan key:generate --no-interaction && \
             sed -i 's/DB_DATABASE=laravel/DB_DATABASE=callpilot/g' .env && \
+            sed -i 's/DB_HOST=127.0.0.1/DB_HOST=localhost/g' .env && \
             grep -q CALLPILOT_DB_SET .env || { \
               sed -i 's/DB_USERNAME=root/DB_USERNAME=${{ secrets.CALLPILOT_DB_USER }}/g' .env && \
               sed -i 's/DB_PASSWORD=/DB_PASSWORD=${{ secrets.CALLPILOT_DB_PASS }}/g' .env && \
               echo 'CALLPILOT_DB_SET=1' >> .env; \
             } && \
-            sed -i 's|APP_URL=https://callpilot.ibo.dowaba.com|APP_URL=https://callpilot.ibo.dowaba.com|g' .env && \
-            php artisan migrate --force && \
-            php artisan db:seed --force 2>/dev/null || true && \
+            php artisan config:clear && \
+            php artisan migrate --force 2>&1 && \
+            php artisan db:seed --force 2>&1 | grep -v 'Seeding' || true && \
             php artisan config:cache && \
             php artisan route:cache && \
             php artisan storage:link --force 2>/dev/null || true && \
-            chown -R www-data:www-data storage bootstrap/cache && \
+            chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true && \
             echo '=== DEPLOY TAMAM ==='"
 
       - name: Health check
