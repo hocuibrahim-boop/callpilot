@@ -30,7 +30,12 @@ jobs:
           ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
             "if [ ! -f /var/www/callpilot/artisan ]; then \
               echo 'Laravel kuruluyor...' && \
-              composer create-project laravel/laravel /var/www/callpilot --prefer-dist --no-interaction && \
+              cd /var/www && \
+              rm -rf /tmp/callpilot-tmp && \
+              php /usr/local/bin/composer create-project laravel/laravel /tmp/callpilot-tmp --prefer-dist --no-interaction 2>&1 || \
+              /usr/local/bin/composer create-project laravel/laravel /tmp/callpilot-tmp --prefer-dist --no-interaction 2>&1 && \
+              cp -r /tmp/callpilot-tmp/. /var/www/callpilot/ && \
+              rm -rf /tmp/callpilot-tmp && \
               echo 'Laravel kuruldu'; \
             else \
               echo 'Laravel zaten kurulu'; \
