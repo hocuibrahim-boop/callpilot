@@ -81,6 +81,11 @@ jobs:
       - name: Health check
         run: |
           ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
-            "cd /var/www/callpilot && php artisan --version 2>&1 && echo '=== CALLPILOT OK ==='" || true
+            "cd /var/www/callpilot && php artisan --version 2>&1 && \
+            echo '=== NGINX KONTROL ===' && \
+            ls /etc/nginx/sites-enabled/ && \
+            ls /etc/nginx/sites-available/ && \
+            grep -r 'dasakademi' /etc/nginx/sites-enabled/ 2>/dev/null | head -5 || echo 'dasakademi config bulunamadı' && \
+            echo '=== CALLPILOT OK ==='" || true
 # Notlar: Public key sunucuya manuel eklenecek:
 # echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKVQ4mrG35YwH4uNOic6fNUB9hcU6+xxsSfHBbDcK7Mw callpilot-deploy" >> ~/.ssh/authorized_keys
