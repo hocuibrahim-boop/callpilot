@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CallController;
+use App\Http\Controllers\Api\DeviceController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\PanelController;
 use App\Http\Controllers\Api\ReminderController;
@@ -19,6 +20,12 @@ Route::post('/webhook/verimor', [WebhookController::class, 'verimor'])
 Route::middleware(\App\Http\Middleware\ApiTokenAuth::class)->group(function () {
 
     Route::get('/auth/me', [AuthController::class, 'me']);
+
+    // Cihaz kaydı + Push
+    Route::post('/devices/register', [DeviceController::class, 'register']);
+    Route::post('/devices/heartbeat', [DeviceController::class, 'heartbeat']);
+    Route::post('/devices/unregister', [DeviceController::class, 'unregister']);
+    Route::post('/devices/test-push', [DeviceController::class, 'test']);
 
     // Aramalar
     Route::get('/calls', [CallController::class, 'index']);

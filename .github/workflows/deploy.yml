@@ -69,6 +69,10 @@ jobs:
               sed -i 's/DB_PASSWORD=/DB_PASSWORD=${{ secrets.CALLPILOT_DB_PASS }}/g' .env && \
               echo 'CALLPILOT_DB_SET=1' >> .env; \
             } && \
+            grep -q \"'fcm'\" config/services.php || sed -i \"/'postmark' =>/i\\    'fcm' => [\\n        'server_key' => env('FCM_SERVER_KEY'),\\n    ],\\n\\n    'callpilot' => [\\n        'webhook_secret' => env('WEBHOOK_SECRET'),\\n    ],\\n\" config/services.php && \
+            grep -q FCM_SERVER_KEY .env || echo 'FCM_SERVER_KEY=' >> .env && \
+            grep -q WEBHOOK_SECRET .env || echo 'WEBHOOK_SECRET=callpilot-webhook-2024' >> .env && \
+            grep -q CRON_SECRET .env || echo 'CRON_SECRET=callpilot-cron-2024' >> .env && \
             php artisan config:clear && \
             php artisan migrate --force 2>&1 && \
             php artisan db:seed --force 2>&1 | grep -v 'Seeding' || true && \

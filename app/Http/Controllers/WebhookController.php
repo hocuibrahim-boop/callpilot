@@ -58,7 +58,7 @@ class WebhookController extends Controller
             ? Lead::where('office_id', $officeId)->where('telefon_normal', $telNorm)->first()
             : null;
 
-        Call::create([
+        $call = Call::create([
             'office_id'        => $officeId,
             'user_id'          => $user?->id,
             'lead_id'          => $lead?->id,
@@ -71,6 +71,13 @@ class WebhookController extends Controller
             'santral_cagri_id' => $uniqueId,
             'kayit_durumu'     => $lead ? 'karta_islendi' : 'beklemede',
         ]);
+
+        // Kayıtsız müşteri + danışman atanmışsa "kaydet?" push'u gönder
+        if (!$lead && $user && $yon !== 'cevapsiz' && $duration > 0) {
+            $dk = $duration < 60 ? $duration . ' sn' : intdiv($duration, 60) . ' dk';
+            app(\App\Services\PushService::class)
+                ->bildirYeniArama($user, $telefon, $dk, $call->id);
+        }
 
         return response()->json(['ok' => true]);
     }
