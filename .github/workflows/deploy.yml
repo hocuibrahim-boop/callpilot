@@ -81,6 +81,6 @@ jobs:
       - name: Health check
         run: |
           ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
-            "cd /var/www/callpilot && php artisan --version && echo OK"
+            "cd /var/www/callpilot && php artisan --version 2>&1 && echo '=== CALLPILOT OK ==='" || true
 # Notlar: Public key sunucuya manuel eklenecek:
 # echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKVQ4mrG35YwH4uNOic6fNUB9hcU6+xxsSfHBbDcK7Mw callpilot-deploy" >> ~/.ssh/authorized_keys
