@@ -33,7 +33,7 @@ jobs:
 
       - name: Rsync app files to server
         run: |
-          rsync -az --delete \
+          rsync -az \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='.env' \
@@ -42,6 +42,7 @@ jobs:
             --exclude='storage/framework/sessions/*' \
             --exclude='storage/framework/views/*' \
             --exclude='vendor' \
+            --exclude='bootstrap/cache/*' \
             -e "ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes" \
             ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/callpilot/"
 
@@ -52,25 +53,28 @@ jobs:
             composer install --no-dev --optimize-autoloader --no-interaction 2>&1 | tail -3 && \
             [ ! -f .env ] && cp .env.example .env || true && \
             grep -q '^APP_KEY=base64' .env || php artisan key:generate --no-interaction && \
+            sed -i 's/APP_NAME=Laravel/APP_NAME=CallPilot/g' .env && \
+            sed -i 's|APP_URL=http://localhost|APP_URL=https://arama.dasakademi.com|g' .env && \
+            sed -i 's/APP_ENV=local/APP_ENV=production/g' .env && \
+            sed -i 's/APP_DEBUG=true/APP_DEBUG=false/g' .env && \
+            sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/g' .env && \
             sed -i 's/DB_DATABASE=laravel/DB_DATABASE=callpilot/g' .env && \
-            sed -i 's/DB_HOST=127.0.0.1/DB_HOST=localhost/g' .env && \
+            grep -q '^DB_DATABASE=callpilot' .env || echo 'DB_DATABASE=callpilot' >> .env && \
             grep -q CALLPILOT_DB_SET .env || { \
               sed -i 's/DB_USERNAME=root/DB_USERNAME=${{ secrets.CALLPILOT_DB_USER }}/g' .env && \
-              sed -i 's/DB_PASSWORD=/DB_PASSWORD=${{ secrets.CALLPILOT_DB_PASS }}/g' .env && \
-              echo 'CALLPILOT_DB_SET=1' >> .env; \
+              printf 'DB_USERNAME=${{ secrets.CALLPILOT_DB_USER }}\nDB_PASSWORD=${{ secrets.CALLPILOT_DB_PASS }}\nDB_HOST=127.0.0.1\nDB_PORT=3306\nFCM_SERVER_KEY=\nWEBHOOK_SECRET=callpilot-webhook-2024\nCRON_SECRET=callpilot-cron-2024\nCALLPILOT_DB_SET=1\n' >> .env; \
             } && \
-            grep -q \"'fcm'\" config/services.php || sed -i \"/'postmark' =>/i\\    'fcm' => [\\n        'server_key' => env('FCM_SERVER_KEY'),\\n    ],\\n\\n    'callpilot' => [\\n        'webhook_secret' => env('WEBHOOK_SECRET'),\\n    ],\\n\" config/services.php && \
-            grep -q FCM_SERVER_KEY .env || echo 'FCM_SERVER_KEY=' >> .env && \
-            grep -q WEBHOOK_SECRET .env || echo 'WEBHOOK_SECRET=callpilot-webhook-2024' >> .env && \
-            grep -q CRON_SECRET .env || echo 'CRON_SECRET=callpilot-cron-2024' >> .env && \
-            php artisan config:clear && \
-            php artisan migrate --force 2>&1 && \
-            php artisan db:seed --force 2>&1 | grep -v 'Seeding' || true && \
-            php artisan config:cache && \
-            php artisan route:cache && \
+            grep -q \"'fcm'\" config/services.php || sed -i \"/'postmark' =>/i\\    'fcm' => ['server_key' => env('FCM_SERVER_KEY')],\\n    'callpilot' => ['webhook_secret' => env('WEBHOOK_SECRET')],\\n\" config/services.php && \
+            rm -f bootstrap/cache/*.php 2>&1 || true && \
+            php artisan optimize:clear 2>&1 && \
+            php artisan migrate --force 2>&1 | tail -5 && \
+            php artisan db:seed --force 2>&1 | tail -3 || true && \
+            php artisan config:cache 2>&1 && \
             php artisan storage:link --force 2>/dev/null || true && \
-            chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true && \
-            echo '=== DEPLOY TAMAM ==='"
+            chown -R www-data:www-data storage bootstrap/cache && \
+            systemctl reload nginx 2>/dev/null || true && \
+            echo '=== KURULUM TAMAM ===' && \
+            curl -sk -H 'Host: arama.dasakademi.com' https://127.0.0.1/ 2>&1 | head -c 150"
 
       - name: Health check
         run: |
