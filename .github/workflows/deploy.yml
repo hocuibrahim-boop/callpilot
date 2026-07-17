@@ -27,24 +27,9 @@ jobs:
 
       - name: Install Laravel on server (first time only)
         run: |
-          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
-            "if [ ! -f /var/www/callpilot/public/index.php ]; then \
-              echo 'Laravel cekirdegi eksik, temiz kuruluyor...' && \
-              mkdir -p /var/www/callpilot-backup && \
-              cp -r /var/www/callpilot/app /var/www/callpilot/routes /var/www/callpilot/database /var/www/callpilot/.env /var/www/callpilot-backup/ 2>/dev/null || true && \
-              rm -rf /var/www/callpilot && \
-              cd /var/www && \
-              composer create-project laravel/laravel callpilot --prefer-dist --no-interaction 2>&1 | tail -5 && \
-              echo 'Laravel kuruldu, uygulama dosyalari geri yukleniyor...' && \
-              cp -r /var/www/callpilot-backup/app /var/www/callpilot/ 2>/dev/null || true && \
-              cp -r /var/www/callpilot-backup/routes /var/www/callpilot/ 2>/dev/null || true && \
-              cp -r /var/www/callpilot-backup/database /var/www/callpilot/ 2>/dev/null || true && \
-              cp /var/www/callpilot-backup/.env /var/www/callpilot/ 2>/dev/null || true && \
-              rm -rf /var/www/callpilot-backup && \
-              echo 'Tamam'; \
-            else \
-              echo 'Laravel zaten kurulu'; \
-            fi"
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "which composer || echo NO_COMPOSER; composer --version 2>&1 | head -1"
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "if [ ! -f /var/www/callpilot/public/index.php ]; then echo 'KURULUM BASLIYOR'; mkdir -p /var/www/cp-bak; cp -r /var/www/callpilot/app /var/www/cp-bak/ 2>/dev/null; cp -r /var/www/callpilot/routes /var/www/cp-bak/ 2>/dev/null; cp -r /var/www/callpilot/database /var/www/cp-bak/ 2>/dev/null; cp /var/www/callpilot/.env /var/www/cp-bak/ 2>/dev/null; rm -rf /var/www/callpilot; cd /var/www && composer create-project laravel/laravel callpilot --prefer-dist --no-interaction; echo \"EXIT: \$?\"; ls -la /var/www/callpilot/public/index.php; else echo 'ZATEN KURULU'; fi"
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "if [ -d /var/www/cp-bak ]; then cp -r /var/www/cp-bak/app /var/www/callpilot/ 2>/dev/null; cp -r /var/www/cp-bak/routes /var/www/callpilot/ 2>/dev/null; cp -r /var/www/cp-bak/database /var/www/callpilot/ 2>/dev/null; cp /var/www/cp-bak/.env /var/www/callpilot/ 2>/dev/null; rm -rf /var/www/cp-bak; echo 'APP DOSYALARI GERI YUKLENDI'; fi; echo 'FINAL:'; ls -la /var/www/callpilot/public/index.php 2>&1"
 
       - name: Rsync app files to server
         run: |
