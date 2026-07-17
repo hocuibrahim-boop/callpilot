@@ -28,15 +28,20 @@ jobs:
       - name: Install Laravel on server (first time only)
         run: |
           ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
-            "if [ ! -f /var/www/callpilot/artisan ]; then \
-              echo 'Laravel kuruluyor...' && \
+            "if [ ! -f /var/www/callpilot/public/index.php ]; then \
+              echo 'Laravel cekirdegi eksik, temiz kuruluyor...' && \
+              mkdir -p /var/www/callpilot-backup && \
+              cp -r /var/www/callpilot/app /var/www/callpilot/routes /var/www/callpilot/database /var/www/callpilot/.env /var/www/callpilot-backup/ 2>/dev/null || true && \
+              rm -rf /var/www/callpilot && \
               cd /var/www && \
-              rm -rf /tmp/callpilot-tmp && \
-              php /usr/local/bin/composer create-project laravel/laravel /tmp/callpilot-tmp --prefer-dist --no-interaction 2>&1 || \
-              /usr/local/bin/composer create-project laravel/laravel /tmp/callpilot-tmp --prefer-dist --no-interaction 2>&1 && \
-              cp -r /tmp/callpilot-tmp/. /var/www/callpilot/ && \
-              rm -rf /tmp/callpilot-tmp && \
-              echo 'Laravel kuruldu'; \
+              composer create-project laravel/laravel callpilot --prefer-dist --no-interaction 2>&1 | tail -5 && \
+              echo 'Laravel kuruldu, uygulama dosyalari geri yukleniyor...' && \
+              cp -r /var/www/callpilot-backup/app /var/www/callpilot/ 2>/dev/null || true && \
+              cp -r /var/www/callpilot-backup/routes /var/www/callpilot/ 2>/dev/null || true && \
+              cp -r /var/www/callpilot-backup/database /var/www/callpilot/ 2>/dev/null || true && \
+              cp /var/www/callpilot-backup/.env /var/www/callpilot/ 2>/dev/null || true && \
+              rm -rf /var/www/callpilot-backup && \
+              echo 'Tamam'; \
             else \
               echo 'Laravel zaten kurulu'; \
             fi"
@@ -84,6 +89,6 @@ jobs:
 
       - name: Health check
         run: |
-          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "echo '=== callpilot dizin ==='; ls -la /var/www/callpilot/ 2>&1 | head -20; echo '=== public ==='; ls -la /var/www/callpilot/public/ 2>&1 | head; echo '=== artisan ==='; ls -la /var/www/callpilot/artisan 2>&1"
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "echo '=== public/index.php ==='; ls -la /var/www/callpilot/public/index.php 2>&1; echo '=== nginx reload ==='; nginx -t 2>&1 && systemctl reload nginx; echo '=== HTTP TEST ==='; curl -s -o /dev/null -w 'HTTP %{http_code}' https://arama.dasakademi.com/ 2>&1; echo ''" || true
 # Notlar: Public key sunucuya manuel eklenecek:
 # echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKVQ4mrG35YwH4uNOic6fNUB9hcU6+xxsSfHBbDcK7Mw callpilot-deploy" >> ~/.ssh/authorized_keys
