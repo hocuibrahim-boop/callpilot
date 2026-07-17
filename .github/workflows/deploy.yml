@@ -84,14 +84,6 @@ jobs:
 
       - name: Health check
         run: |
-          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
-            "echo '=== NGINX CONFIGS ===' && \
-            ls /etc/nginx/sites-enabled/ 2>/dev/null && \
-            ls /etc/nginx/conf.d/ 2>/dev/null && \
-            grep -rn 'dasakademi' /etc/nginx/ 2>/dev/null | grep server_name | head -3 && \
-            echo '=== PHP-FPM ===' && \
-            ls /run/php/ 2>/dev/null || ls /var/run/php/ 2>/dev/null && \
-            echo '=== CALLPILOT OK ===' && \
-            cd /var/www/callpilot && php artisan --version 2>&1" || true
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "echo '=== callpilot dizin ==='; ls -la /var/www/callpilot/ 2>&1 | head -20; echo '=== public ==='; ls -la /var/www/callpilot/public/ 2>&1 | head; echo '=== artisan ==='; ls -la /var/www/callpilot/artisan 2>&1"
 # Notlar: Public key sunucuya manuel eklenecek:
 # echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKVQ4mrG35YwH4uNOic6fNUB9hcU6+xxsSfHBbDcK7Mw callpilot-deploy" >> ~/.ssh/authorized_keys
