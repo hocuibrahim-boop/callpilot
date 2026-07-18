@@ -91,7 +91,8 @@ jobs:
             echo '--- DOSYALAR ---'; ls /var/www/callpilot/artisan /var/www/callpilot/public/index.php /var/www/callpilot/bootstrap/app.php /var/www/callpilot/routes/web.php 2>&1;
             echo '--- ANASAYFA (resolve) ---'; curl -sk --resolve arama.dasakademi.com:443:127.0.0.1 https://arama.dasakademi.com/ 2>&1 | head -c 400;
             echo ''; echo '--- HTTP KOD ---'; curl -sk -o /dev/null -w '%{http_code}' --resolve arama.dasakademi.com:443:127.0.0.1 https://arama.dasakademi.com/ 2>&1;
-            echo ''; echo '--- HATA MESAJI ---'; grep -oE 'production\.(ERROR|CRITICAL): [^\{]{10,300}' /var/www/callpilot/storage/logs/laravel.log 2>&1 | tail -3;
+            echo ''; echo '--- LOGIN TESTI ---'; curl -sk --resolve arama.dasakademi.com:443:127.0.0.1 -X POST -H 'Content-Type: application/json' -d '{\"kullanici\":\"yonetici@ornek.com\",\"sifre\":\"parola123\"}' https://arama.dasakademi.com/api/auth/login 2>&1 | head -c 300;
+            echo ''; echo '--- HATA MESAJI ---'; grep -oE 'production\.(ERROR|CRITICAL): [^\{]{10,200}' /var/www/callpilot/storage/logs/laravel.log 2>&1 | tail -2;
             echo ''; echo '--- IZINLER ---'; ls -ld /var/www/callpilot/bootstrap/cache /var/www/callpilot/storage/logs /var/www/callpilot/storage/framework/views 2>&1;
             echo ''; echo '--- PHP-FPM USER ---'; grep -E '^user|^group' /etc/php/8.4/fpm/pool.d/www.conf 2>&1;
             echo ''; echo '--- NGINX ERR ---'; grep -v 'access forbidden' /var/log/nginx/arama-error.log 2>&1 | tail -2 | head -c 400;
