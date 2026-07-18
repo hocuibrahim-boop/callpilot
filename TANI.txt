@@ -4,27 +4,18 @@
 /var/www/callpilot/public/index.php
 /var/www/callpilot/routes/web.php
 --- ANASAYFA (resolve) ---
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>Server Error</title>
-
-        <style>
-            /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}a{background-color:transparent}code{font
+{"app":"CallPilot","status":"ok","version":"1.0"}
 --- HTTP KOD ---
-500
+200
 --- HATA MESAJI ---
-production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.sessions' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `sessions` where `id` = QBnZdvfgBGvXo1A26EPKo6rJe3xBhtjnSowSwU1u limit 1) 
-production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.sessions' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `sessions` where `id` = 1TSfIYuM10O32BznLJRjIqmE5xMcfQDahjSUL9sY limit 1) 
-production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.sessions' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `sessions` where `id` = z5RjtJ63qHPCHb2hAtNHbFear7BcDQfh84x6hHLP limit 1) 
+production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.cache_locks' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: update `cache_locks` set `owner` = 8a43gqX6xOq6UY5x, `expiration` = 1784471221 where `key` = callpilot_cache_framework/schedule-e
+production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.cache_locks' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: update `cache_locks` set `owner` = QSSpQrOiCptpAj8L, `expiration` = 1784471281 where `key` = callpilot_cache_framework/schedule-e
+production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.cache_locks' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: update `cache_locks` set `owner` = ADAPy4HssYPhGCvC, `expiration` = 1784471341 where `key` = callpilot_cache_framework/schedule-e
 
 --- IZINLER ---
-drwxrwxr-x 2 www-data www-data 4096 Jul 18 14:24 /var/www/callpilot/bootstrap/cache
-drwxrwxr-x 2 www-data www-data 4096 Jul 18 14:24 /var/www/callpilot/storage/framework/views
-drwxrwxr-x 2 www-data www-data 4096 Jul 18 14:24 /var/www/callpilot/storage/logs
+drwxrwxr-x 2 www-data www-data 4096 Jul 18 14:29 /var/www/callpilot/bootstrap/cache
+drwxrwxr-x 2 www-data www-data 4096 Jul 18 14:29 /var/www/callpilot/storage/framework/views
+drwxrwxr-x 2 www-data www-data 4096 Jul 18 14:29 /var/www/callpilot/storage/logs
 
 --- PHP-FPM USER ---
 user = www-data
