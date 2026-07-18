@@ -53,6 +53,9 @@ jobs:
         run: |
           ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
             "cd /var/www/callpilot && \
+            mkdir -p bootstrap/cache storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/public && \
+            chmod -R 775 bootstrap/cache storage && \
+            chown -R www-data:www-data bootstrap/cache storage && \
             composer install --no-dev --optimize-autoloader --no-interaction 2>&1 | tail -3 && \
             [ ! -f .env ] && cp .env.example .env || true && \
             grep -q '^APP_KEY=base64' .env || php artisan key:generate --no-interaction && \
@@ -62,11 +65,9 @@ jobs:
             sed -i 's/APP_DEBUG=true/APP_DEBUG=false/g' .env && \
             sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/g' .env && \
             sed -i 's/DB_DATABASE=laravel/DB_DATABASE=callpilot/g' .env && \
-            grep -q '^DB_DATABASE=callpilot' .env || echo 'DB_DATABASE=callpilot' >> .env && \
-            grep -q CALLPILOT_DB_SET .env || { \
-              sed -i 's/DB_USERNAME=root/DB_USERNAME=${{ secrets.CALLPILOT_DB_USER }}/g' .env && \
-              printf 'DB_USERNAME=${{ secrets.CALLPILOT_DB_USER }}\nDB_PASSWORD=${{ secrets.CALLPILOT_DB_PASS }}\nDB_HOST=127.0.0.1\nDB_PORT=3306\nFCM_SERVER_KEY=\nWEBHOOK_SECRET=callpilot-webhook-2024\nCRON_SECRET=callpilot-cron-2024\nCALLPILOT_DB_SET=1\n' >> .env; \
-            } && \
+            sed -i '/^DB_CONNECTION=/d;/^DB_HOST=/d;/^DB_PORT=/d;/^DB_DATABASE=/d;/^DB_USERNAME=/d;/^DB_PASSWORD=/d' .env && \
+            printf 'DB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_DATABASE=callpilot\nDB_USERNAME=${{ secrets.CALLPILOT_DB_USER }}\nDB_PASSWORD=${{ secrets.CALLPILOT_DB_PASS }}\n' >> .env && \
+            grep -q FCM_SERVER_KEY .env || printf 'FCM_SERVER_KEY=\nWEBHOOK_SECRET=callpilot-webhook-2024\nCRON_SECRET=callpilot-cron-2024\n' >> .env && \
             grep -q \"'fcm'\" config/services.php || sed -i \"/'postmark' =>/i\\    'fcm' => ['server_key' => env('FCM_SERVER_KEY')],\\n    'callpilot' => ['webhook_secret' => env('WEBHOOK_SECRET')],\\n\" config/services.php && \
             rm -f bootstrap/cache/*.php 2>&1 || true && \
             php artisan optimize:clear 2>&1 && \
