@@ -83,11 +83,11 @@ jobs:
 
       - name: Health check (KATI - basarisizsa deploy kirmizi)
         run: |
-          echo "=== ANASAYFA TESTI ==="
-          ANA=$(ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "curl -sk -H 'Host: arama.dasakademi.com' https://127.0.0.1/ 2>&1 | head -c 200")
+          echo "=== ANASAYFA TESTI (--resolve ile dogru SNI) ==="
+          ANA=$(ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "curl -sk --resolve arama.dasakademi.com:443:127.0.0.1 https://arama.dasakademi.com/ 2>&1 | head -c 250")
           echo "$ANA"
           echo "=== LOGIN TESTI ==="
-          LOG=$(ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "curl -sk -X POST -H 'Host: arama.dasakademi.com' -H 'Content-Type: application/json' -d '{\"kullanici\":\"yonetici@ornek.com\",\"sifre\":\"parola123\"}' https://127.0.0.1/api/auth/login 2>&1 | head -c 250")
+          LOG=$(ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "curl -sk --resolve arama.dasakademi.com:443:127.0.0.1 -X POST -H 'Content-Type: application/json' -d '{\"kullanici\":\"yonetici@ornek.com\",\"sifre\":\"parola123\"}' https://arama.dasakademi.com/api/auth/login 2>&1 | head -c 250")
           echo "$LOG"
           echo "=== SON HATA (varsa) ==="
           ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "tail -c 400 /var/www/callpilot/storage/logs/laravel.log 2>&1" || true
