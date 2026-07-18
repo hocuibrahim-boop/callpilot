@@ -65,8 +65,8 @@ jobs:
             sed -i 's/APP_DEBUG=true/APP_DEBUG=false/g' .env && \
             sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/g' .env && \
             sed -i 's/DB_DATABASE=laravel/DB_DATABASE=callpilot/g' .env && \
-            sed -i '/^DB_CONNECTION=/d;/^DB_HOST=/d;/^DB_PORT=/d;/^DB_DATABASE=/d;/^DB_USERNAME=/d;/^DB_PASSWORD=/d' .env && \
-            printf 'DB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_DATABASE=callpilot\nDB_USERNAME=${{ secrets.CALLPILOT_DB_USER }}\nDB_PASSWORD=${{ secrets.CALLPILOT_DB_PASS }}\n' >> .env && \
+            sed -i '/^DB_CONNECTION=/d;/^DB_HOST=/d;/^DB_PORT=/d;/^DB_DATABASE=/d;/^DB_USERNAME=/d;/^DB_PASSWORD=/d;/^SESSION_DRIVER=/d;/^CACHE_STORE=/d;/^QUEUE_CONNECTION=/d' .env && \
+            printf 'DB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_DATABASE=callpilot\nDB_USERNAME=${{ secrets.CALLPILOT_DB_USER }}\nDB_PASSWORD=${{ secrets.CALLPILOT_DB_PASS }}\nSESSION_DRIVER=file\nCACHE_STORE=file\nQUEUE_CONNECTION=sync\n' >> .env && \
             grep -q FCM_SERVER_KEY .env || printf 'FCM_SERVER_KEY=\nWEBHOOK_SECRET=callpilot-webhook-2024\nCRON_SECRET=callpilot-cron-2024\n' >> .env && \
             grep -q \"'fcm'\" config/services.php || sed -i \"/'postmark' =>/i\\    'fcm' => ['server_key' => env('FCM_SERVER_KEY')],\\n    'callpilot' => ['webhook_secret' => env('WEBHOOK_SECRET')],\\n\" config/services.php && \
             rm -f bootstrap/cache/*.php 2>&1 || true && \
