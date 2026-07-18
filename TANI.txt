@@ -18,21 +18,21 @@
 500
 --- ARTISAN ROUTE LIST ---
 
-In AuthController.php line 11:
-                                                     
-  Class "App\Http\Controllers\Controller" not found  
-                                                     
-
-
+  GET|HEAD  / ............................................... routes/web.php:5
+  POST      api/auth/login .......................... Api\AuthController@login
+  GET|HEAD  api/auth/me ................................ Api\AuthController@me
+  GET|HEAD  api/calls ............................... Api\CallController@index
+  POST      api/calls ............................... Api\CallController@store
+  POST      api/calls/{call}/geri-arandi ....... Api\CallController@geriArandi
+  POST      api/calls/{ca
 --- LARAVEL LOG SON ---
- Symfony\\Component\\Console\\Command\\Command->run()
-#22 /var/www/callpilot/vendor/symfony/console/Application.php(1117): Illuminate\\Console\\Command->run()
-#23 /var/www/callpilot/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand()
-#24 /var/www/callpilot/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun()
-#25 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run()
-#26 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle()
-#27 /var/www/callpilot/artisan(15): Illuminate\\Foundation\\Application->handleCommand()
-#28 {main}
+ate\\Http\\Middleware\\ValidatePathEncoding->handle()
+#49 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}()
+#50 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then()
+#51 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#52 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1220): Illuminate\\Foundation\\Http\\Kernel->handle()
+#53 /var/www/callpilot/public/index.php(20): Illuminate\\Foundation\\Application->handleRequest()
+#54 {main}
 "} 
 
 --- NGINX ERR ---
