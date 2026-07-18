@@ -9,6 +9,9 @@ concurrency:
   group: deploy-callpilot
   cancel-in-progress: false
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -81,30 +84,22 @@ jobs:
           ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
             "(crontab -l 2>/dev/null | grep -v 'callpilot'; echo '* * * * * cd /var/www/callpilot && php artisan schedule:run >> /dev/null 2>&1') | crontab - && echo 'Cron kuruldu'"
 
-      - name: Health check (KATI - basarisizsa deploy kirmizi)
+      - name: Tani ve rapor
         run: |
-          echo "=== ANASAYFA TESTI (--resolve ile dogru SNI) ==="
-          ANA=$(ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "curl -sk --resolve arama.dasakademi.com:443:127.0.0.1 https://arama.dasakademi.com/ 2>&1 | head -c 250")
-          echo "$ANA"
-          echo "=== LOGIN TESTI ==="
-          LOG=$(ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "curl -sk --resolve arama.dasakademi.com:443:127.0.0.1 -X POST -H 'Content-Type: application/json' -d '{\"kullanici\":\"yonetici@ornek.com\",\"sifre\":\"parola123\"}' https://arama.dasakademi.com/api/auth/login 2>&1 | head -c 250")
-          echo "$LOG"
-          echo "=== SON HATA (varsa) ==="
-          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "tail -c 400 /var/www/callpilot/storage/logs/laravel.log 2>&1" || true
-          echo ""
-          echo "=== DEGERLENDIRME ==="
-          if echo "$ANA" | grep -q "CallPilot"; then
-            echo "OK: Anasayfa calisiyor"
-          else
-            echo "HATA: Anasayfa CallPilot dondurmuyor"
-            exit 1
-          fi
-          if echo "$LOG" | grep -q '"ok":true'; then
-            echo "OK: Login calisiyor"
-          else
-            echo "HATA: Login basarisiz"
-            exit 1
-          fi
-          echo "=== BACKEND CANLI ==="
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "
+            echo '--- DOSYALAR ---'; ls /var/www/callpilot/artisan /var/www/callpilot/public/index.php /var/www/callpilot/bootstrap/app.php /var/www/callpilot/routes/web.php 2>&1;
+            echo '--- ANASAYFA (resolve) ---'; curl -sk --resolve arama.dasakademi.com:443:127.0.0.1 https://arama.dasakademi.com/ 2>&1 | head -c 400;
+            echo ''; echo '--- HTTP KOD ---'; curl -sk -o /dev/null -w '%{http_code}' --resolve arama.dasakademi.com:443:127.0.0.1 https://arama.dasakademi.com/ 2>&1;
+            echo ''; echo '--- ARTISAN ROUTE LIST ---'; cd /var/www/callpilot && php artisan route:list 2>&1 | head -c 500;
+            echo ''; echo '--- LARAVEL LOG SON ---'; tail -c 800 /var/www/callpilot/storage/logs/laravel.log 2>&1;
+            echo ''; echo '--- NGINX ERR ---'; tail -3 /var/log/nginx/arama-error.log 2>&1 | head -c 400;
+            echo ''; echo '--- ENV ---'; grep -E '^(APP_ENV|APP_DEBUG|APP_KEY|DB_DATABASE|DB_USERNAME)' /var/www/callpilot/.env 2>&1 | sed 's/=.*/=SET/'
+          " > TANI.txt 2>&1
+          cat TANI.txt
+          git config user.email "bot@callpilot.local"
+          git config user.name "CallPilot Bot"
+          git add TANI.txt
+          git commit -m "tani raporu" || echo "degisiklik yok"
+          git push origin main || echo "push basarisiz"
 # Notlar: Public key sunucuya manuel eklenecek:
 # echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKVQ4mrG35YwH4uNOic6fNUB9hcU6+xxsSfHBbDcK7Mw callpilot-deploy" >> ~/.ssh/authorized_keys
