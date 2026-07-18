@@ -4,26 +4,40 @@
 /var/www/callpilot/public/index.php
 /var/www/callpilot/routes/web.php
 --- ANASAYFA (resolve) ---
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <title>Server Error</title>
+
+        <style>
+            /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}a{background-color:transparent}code{font
 --- HTTP KOD ---
 500
 --- ARTISAN ROUTE LIST ---
 
-In PackageManifest.php line 179:
-                                                                               
-  The /var/www/callpilot/bootstrap/cache directory must be present and writab  
-  le.                                                                          
-                                                                               
+   ErrorException 
 
+  file_get_contents(/var/www/callpilot/composer.json): Failed to open stream: No such file or directory
 
+  at vendor/laravel/framework/src/Illuminate/Foundation/Application.php:1724
+    1720▕         if (! is_null($this->namespace)) {
+    1721▕             return $this->namespace;
+    1722▕         }
+    1723▕ 
+  ➜ 1724▕         $composer = json_decode(file_get_contents($this->basePath('composer.json')), true);
+    1725▕ 
+    1726▕         foreach ((array) da
 --- LARAVEL LOG SON ---
-ion/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
-#5 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(342): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap()
-#6 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(494): Illuminate\\Foundation\\Application->bootstrapWith()
-#7 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(196): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
-#8 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle()
-#9 /var/www/callpilot/artisan(15): Illuminate\\Foundation\\Application->handleCommand()
-#10 {main}
+luminate/Foundation/Console/Kernel.php(368): Illuminate\\Foundation\\Application->getNamespace()
+#4 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(518): Illuminate\\Foundation\\Console\\Kernel->load()
+#5 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(503): Illuminate\\Foundation\\Console\\Kernel->discoverCommands()
+#6 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(196): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#7 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle()
+#8 /var/www/callpilot/artisan(15): Illuminate\\Foundation\\Application->handleCommand()
+#9 {main}
 "} 
 
 --- NGINX ERR ---
@@ -36,3 +50,4 @@ APP_ENV=SET
 APP_KEY=SET
 APP_DEBUG=SET
 DB_DATABASE=SET
+DB_USERNAME=SET
