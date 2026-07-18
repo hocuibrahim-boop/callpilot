@@ -18,26 +18,21 @@
 500
 --- ARTISAN ROUTE LIST ---
 
-   ErrorException 
+In AuthController.php line 11:
+                                                     
+  Class "App\Http\Controllers\Controller" not found  
+                                                     
 
-  file_get_contents(/var/www/callpilot/composer.json): Failed to open stream: No such file or directory
 
-  at vendor/laravel/framework/src/Illuminate/Foundation/Application.php:1724
-    1720▕         if (! is_null($this->namespace)) {
-    1721▕             return $this->namespace;
-    1722▕         }
-    1723▕ 
-  ➜ 1724▕         $composer = json_decode(file_get_contents($this->basePath('composer.json')), true);
-    1725▕ 
-    1726▕         foreach ((array) da
 --- LARAVEL LOG SON ---
-luminate/Foundation/Console/Kernel.php(368): Illuminate\\Foundation\\Application->getNamespace()
-#4 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(518): Illuminate\\Foundation\\Console\\Kernel->load()
-#5 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(503): Illuminate\\Foundation\\Console\\Kernel->discoverCommands()
-#6 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(196): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
-#7 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle()
-#8 /var/www/callpilot/artisan(15): Illuminate\\Foundation\\Application->handleCommand()
-#9 {main}
+ Symfony\\Component\\Console\\Command\\Command->run()
+#22 /var/www/callpilot/vendor/symfony/console/Application.php(1117): Illuminate\\Console\\Command->run()
+#23 /var/www/callpilot/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand()
+#24 /var/www/callpilot/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun()
+#25 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run()
+#26 /var/www/callpilot/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle()
+#27 /var/www/callpilot/artisan(15): Illuminate\\Foundation\\Application->handleCommand()
+#28 {main}
 "} 
 
 --- NGINX ERR ---
