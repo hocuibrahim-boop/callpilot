@@ -76,8 +76,35 @@ jobs:
             echo '=== KURULUM TAMAM ===' && \
             curl -sk -H 'Host: arama.dasakademi.com' https://127.0.0.1/ 2>&1 | head -c 150"
 
-      - name: Health check
+      - name: Cron kur (hatirlatmalar)
         run: |
-          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "echo '=== public/index.php ==='; ls -la /var/www/callpilot/public/index.php 2>&1; echo '=== nginx reload ==='; nginx -t 2>&1 && systemctl reload nginx; echo '=== HTTP TEST ==='; curl -s -o /dev/null -w 'HTTP %{http_code}' https://arama.dasakademi.com/ 2>&1; echo ''" || true
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "(crontab -l 2>/dev/null | grep -v 'callpilot'; echo '* * * * * cd /var/www/callpilot && php artisan schedule:run >> /dev/null 2>&1') | crontab - && echo 'Cron kuruldu'"
+
+      - name: Health check (KATI - basarisizsa deploy kirmizi)
+        run: |
+          echo "=== ANASAYFA TESTI ==="
+          ANA=$(ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "curl -sk -H 'Host: arama.dasakademi.com' https://127.0.0.1/ 2>&1 | head -c 200")
+          echo "$ANA"
+          echo "=== LOGIN TESTI ==="
+          LOG=$(ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "curl -sk -X POST -H 'Host: arama.dasakademi.com' -H 'Content-Type: application/json' -d '{\"kullanici\":\"yonetici@ornek.com\",\"sifre\":\"parola123\"}' https://127.0.0.1/api/auth/login 2>&1 | head -c 250")
+          echo "$LOG"
+          echo "=== SON HATA (varsa) ==="
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "tail -c 400 /var/www/callpilot/storage/logs/laravel.log 2>&1" || true
+          echo ""
+          echo "=== DEGERLENDIRME ==="
+          if echo "$ANA" | grep -q "CallPilot"; then
+            echo "OK: Anasayfa calisiyor"
+          else
+            echo "HATA: Anasayfa CallPilot dondurmuyor"
+            exit 1
+          fi
+          if echo "$LOG" | grep -q '"ok":true'; then
+            echo "OK: Login calisiyor"
+          else
+            echo "HATA: Login basarisiz"
+            exit 1
+          fi
+          echo "=== BACKEND CANLI ==="
 # Notlar: Public key sunucuya manuel eklenecek:
 # echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKVQ4mrG35YwH4uNOic6fNUB9hcU6+xxsSfHBbDcK7Mw callpilot-deploy" >> ~/.ssh/authorized_keys
