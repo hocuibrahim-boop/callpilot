@@ -12,10 +12,10 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
 :root{
-  --pine-deep:#07211A; --pine-900:#0A2A20; --pine:#0E3B2C; --pine-2:#1A5741; --pine-3:#2B7A5C; --pine-4:#3C9B75;
+  --pine-deep:#07211A; --pine-900:#0A2A20; --pine:#0E3B2C; --pine-2:#1A5741; --pine-3:#2F8D69; --pine-4:#3FB587; --pine-5:#5ED3A6;
   --pine-soft:#E7F2EC; --line-d:rgba(255,255,255,.09);
-  --teal:#1F6E7A; --teal-2:#2E8C9A; --teal-3:#4FB0BE; --teal-soft:#E3F0F2;
-  --gold:#9E7418; --gold-2:#C69B3E; --gold-3:#E8CB86; --gold-4:#F5E4B8; --gold-soft:#FAF3E2; --gold-line:#E8D8AE;
+  --teal:#1F7C8A; --teal-2:#31A3B4; --teal-3:#4FCEE0; --teal-soft:#E3F0F2;
+  --gold:#A87C15; --gold-2:#D4A63F; --gold-3:#F2D48C; --gold-4:#FFEBC0; --gold-soft:#FAF3E2; --gold-line:#E8D8AE;
   --clay:#B0442C; --clay-soft:#FBEBE6;
   --paper:#F7F5EF; --card:#FFF; --ink:#111C18; --mut:#68776E; --mut-2:#9AA69E; --line:#E5E1D7;
   --disp:'Fraunces',Georgia,serif; --body:'Manrope',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
@@ -93,23 +93,47 @@ section{padding:100px 0;position:relative}
 /* ══ Odometre ══ */
 .odo-serit{border-top:1px solid var(--line-d);border-bottom:1px solid var(--line-d);background:rgba(0,0,0,.20)}
 .odo-grid{display:grid;grid-template-columns:repeat(4,1fr)}
-.odo-hucre{padding:34px 22px;text-align:center;border-right:1px solid var(--line-d)}
 .odo-hucre:last-child{border-right:none}
-.odo{display:inline-flex;align-items:baseline;gap:1px;font-family:var(--disp);font-weight:600;font-size:38px;line-height:1;
-  background:linear-gradient(100deg,var(--gold-4),var(--gold-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.odo .hane{height:1em;overflow:hidden;display:inline-block}
-.odo .rulo{display:flex;flex-direction:column;transition:transform 1.5s cubic-bezier(.16,.84,.24,1)}
-.odo .rulo i{height:1em;line-height:1;font-style:normal;display:block}
-.odo .ek{margin-left:2px}
-.odo-l{font-size:12.5px;color:rgba(255,255,255,.55);font-weight:600;margin-top:9px}
+.odo{display:inline-flex;align-items:baseline;font-family:var(--disp);font-weight:600;font-size:46px;line-height:1;
+  color:var(--gold-3);text-shadow:0 0 26px rgba(242,212,140,.34),0 2px 4px rgba(0,0,0,.3)}
+.odo .hane{height:1em;overflow:hidden;display:inline-block;vertical-align:baseline}
+.odo .rulo{display:block;transition:transform 2.1s cubic-bezier(.16,.86,.22,1)}
+.odo .rulo b{display:block;height:1em;line-height:1;font-weight:600;font-family:var(--disp)}
+.odo .ek,.odo .sabit{display:inline-block}
+.odo-hucre{padding:38px 22px;text-align:center;border-right:1px solid var(--line-d);transition:.3s}
+.odo-hucre:hover{background:rgba(242,212,140,.045)}
+.odo-l{font-size:12.5px;color:rgba(255,255,255,.6);font-weight:600;margin-top:11px;letter-spacing:.01em}
 
 /* ══ Telefon ══ */
 .phone-stage{display:flex;justify-content:center;position:relative}
 .phone-stage::before{content:"";position:absolute;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(232,203,134,.2),transparent 66%);top:46%;left:50%;transform:translate(-50%,-50%)}
-.phone{width:296px;height:600px;background:var(--paper);border-radius:42px;border:10px solid #04150F;box-shadow:var(--sh-4),0 0 0 1px rgba(232,203,134,.18);position:relative;overflow:hidden;z-index:3}
-.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:104px;height:24px;background:#04150F;border-radius:0 0 14px 14px;z-index:20}
-.status{display:flex;justify-content:space-between;padding:9px 21px 4px;font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--ink)}
-.screen{position:relative;height:calc(100% - 32px)}
+/* gercekci cihaz govdesi */
+.phone{width:302px;height:614px;position:relative;z-index:3;padding:11px;border-radius:50px;
+  background:linear-gradient(148deg,#3A4B44 0%,#16241F 26%,#0A1512 55%,#22322C 82%,#0E1A16 100%);
+  box-shadow:0 54px 110px rgba(0,0,0,.56),0 0 0 1px rgba(255,255,255,.09),
+             inset 0 1px 2px rgba(255,255,255,.22),inset 0 -1px 2px rgba(0,0,0,.5)}
+.phone-ic{position:relative;height:100%;background:var(--paper);border-radius:40px;overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.55)}
+/* dinamik ada */
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:86px;height:25px;background:#000;border-radius:99px;z-index:26;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.island::after{content:"";position:absolute;right:9px;top:50%;transform:translateY(-50%);width:7px;height:7px;border-radius:50%;
+  background:radial-gradient(circle at 35% 32%,#28404F,#0A141A 70%);box-shadow:0 0 3px rgba(80,150,190,.5)}
+/* ekran yansimasi */
+.glare{position:absolute;inset:0;z-index:24;pointer-events:none;border-radius:40px;
+  background:linear-gradient(128deg,rgba(255,255,255,.17) 0%,rgba(255,255,255,.04) 24%,transparent 46%,transparent 74%,rgba(255,255,255,.07) 100%)}
+/* alt cubuk */
+.home-bar{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:112px;height:4px;border-radius:99px;background:rgba(0,0,0,.26);z-index:25}
+/* yan tuslar */
+.tus{position:absolute;background:linear-gradient(90deg,#485A52,#1B2A24);border-radius:3px;z-index:2}
+.tus-sag{right:-3px;top:168px;width:3px;height:66px;background:linear-gradient(270deg,#485A52,#1B2A24)}
+.tus-sol1{left:-3px;top:126px;width:3px;height:32px}
+.tus-sol2{left:-3px;top:170px;width:3px;height:54px}
+.tus-sol3{left:-3px;top:236px;width:3px;height:54px}
+
+.status{display:flex;justify-content:space-between;align-items:center;padding:13px 24px 5px;font-family:var(--body);font-size:12px;font-weight:700;color:var(--ink)}
+.status .sag{display:flex;gap:5px;align-items:center;font-size:12.5px}
+.screen{position:relative;height:calc(100% - 40px)}
 .scene{position:absolute;inset:0;padding:14px;opacity:0;transition:opacity .45s}
 .scene.on{opacity:1}
 .float-card{position:absolute;z-index:5;background:rgba(255,255,255,.97);border-radius:15px;padding:12px 14px;box-shadow:0 20px 48px rgba(0,0,0,.38);display:flex;align-items:center;gap:11px;animation:bob 5.5s ease-in-out infinite}
@@ -118,11 +142,17 @@ section{padding:100px 0;position:relative}
 .fc-1{top:54px;left:-42px;animation-delay:-1s}
 .fc-2{bottom:98px;right:-50px;animation-delay:-3s}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.ic-round{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;font-size:16px}
-.ic-green{background:var(--pine-soft);color:var(--pine-3)}
-.ic-gold{background:var(--gold-soft);color:var(--gold)}
-.ic-teal{background:var(--teal-soft);color:var(--teal)}
-.ic-clay{background:var(--clay-soft);color:var(--clay)}
+.ic-round i{position:relative;z-index:2}
+.ic-round{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;font-size:16px;position:relative;overflow:hidden}
+.ic-round::after{content:"";position:absolute;inset:0;background:linear-gradient(150deg,rgba(255,255,255,.55),transparent 52%);pointer-events:none}
+.ic-green{background:linear-gradient(148deg,#E9F6EF,#CFE9DC);color:var(--pine-3);
+  box-shadow:0 5px 14px rgba(47,141,105,.24),inset 0 1px 0 rgba(255,255,255,.85);border:1px solid rgba(47,141,105,.16)}
+.ic-gold{background:linear-gradient(148deg,#FDF6E6,#F3E3BC);color:var(--gold);
+  box-shadow:0 5px 14px rgba(168,124,21,.24),inset 0 1px 0 rgba(255,255,255,.85);border:1px solid rgba(168,124,21,.18)}
+.ic-teal{background:linear-gradient(148deg,#E6F4F6,#C9E7ED);color:var(--teal);
+  box-shadow:0 5px 14px rgba(31,124,138,.24),inset 0 1px 0 rgba(255,255,255,.85);border:1px solid rgba(31,124,138,.16)}
+.ic-clay{background:linear-gradient(148deg,#FCEDE8,#F6D9D0);color:var(--clay);
+  box-shadow:0 5px 14px rgba(176,68,44,.22),inset 0 1px 0 rgba(255,255,255,.85);border:1px solid rgba(176,68,44,.16)}
 
 .call-live{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:linear-gradient(165deg,var(--pine),var(--pine-deep));margin:-14px}
 .call-live .ring{width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;position:relative;margin-bottom:18px}
@@ -192,9 +222,10 @@ h2 em{font-style:normal;background:linear-gradient(100deg,var(--gold),var(--gold
 .step:last-child{border-right:none}
 .step:hover{background:linear-gradient(180deg,var(--paper),var(--card))}
 .step-num{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.15em;margin-bottom:18px}
-.step-ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;margin-bottom:18px;transition:.28s}
-.step:hover .step-ic{transform:scale(1.1) rotate(-4deg)}
-.step-ic i{font-size:23px}
+.step-ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;margin-bottom:18px;transition:.3s cubic-bezier(.2,.8,.3,1);position:relative;overflow:hidden}
+.step-ic::after{content:"";position:absolute;inset:0;background:linear-gradient(150deg,rgba(255,255,255,.6),transparent 50%)}
+.step:hover .step-ic{transform:scale(1.12) rotate(-5deg)}
+.step-ic i{font-size:24px;position:relative;z-index:2}
 .step h3{font-family:var(--disp);font-weight:600;font-size:21px;color:var(--pine-deep);margin-bottom:8px}
 .step p{font-size:14.5px;color:var(--mut)}
 
@@ -202,8 +233,8 @@ h2 em{font-style:normal;background:linear-gradient(100deg,var(--gold),var(--gold
 .feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .feat{background:rgba(255,255,255,.045);border:1px solid var(--line-d);border-radius:20px;padding:26px;transition:.26s cubic-bezier(.2,.8,.3,1);backdrop-filter:blur(8px)}
 .feat:hover{transform:translateY(-5px);background:rgba(255,255,255,.08);border-color:rgba(232,203,134,.26);box-shadow:0 20px 50px rgba(0,0,0,.28)}
-.feat .ic-round{width:46px;height:46px;border-radius:15px;margin-bottom:15px;font-size:21px;transition:.26s}
-.feat:hover .ic-round{transform:scale(1.1)}
+.feat .ic-round{width:48px;height:48px;border-radius:16px;margin-bottom:16px;font-size:22px;transition:.28s cubic-bezier(.2,.8,.3,1)}
+.feat:hover .ic-round{transform:scale(1.12) rotate(-4deg)}
 .feat h3{font-size:15.5px;font-weight:800;margin-bottom:6px;color:#fff}
 .feat p{font-size:14px;color:rgba(255,255,255,.62)}
 
@@ -382,8 +413,15 @@ footer a:hover{color:var(--gold-3)}
           <span><span class="t">Yarın 10:00</span><span class="s">Ahmet Yılmaz aranacak</span></span>
         </div>
         <div class="phone">
-          <div class="notch"></div>
-          <div class="status"><span id="clock">14:32</span><span>▮▮▮ 5G</span></div>
+          <span class="tus tus-sol1"></span><span class="tus tus-sol2"></span><span class="tus tus-sol3"></span><span class="tus tus-sag"></span>
+          <div class="phone-ic">
+          <div class="island"></div>
+          <div class="glare"></div>
+          <div class="home-bar"></div>
+          <div class="status">
+            <span id="clock">14:32</span>
+            <span class="sag"><i class="bi bi-reception-4"></i><i class="bi bi-wifi"></i><i class="bi bi-battery-full"></i></span>
+          </div>
           <div class="screen">
             <div class="scene on" id="s1">
               <div class="call-live">
@@ -417,6 +455,7 @@ footer a:hover{color:var(--gold-3)}
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
         <div class="stage-dots" id="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div>
@@ -732,31 +771,51 @@ const azalt = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
 /* ── Odometre ── */
 (function(){
-  const kur = kap => {
-    const hedef = kap.dataset.v, ek = kap.dataset.ek || '';
+  function kur(kap){
+    const hedef = String(kap.dataset.v), ek = kap.dataset.ek || '';
     kap.innerHTML = '';
-    [...hedef].forEach(k => {
-      if (!/[0-9]/.test(k)) { kap.appendChild(Object.assign(document.createElement('span'),{textContent:k})); return; }
+    const haneler = [];
+    [...hedef].forEach(ch => {
+      if (!/[0-9]/.test(ch)){
+        const s = document.createElement('span'); s.className = 'sabit'; s.textContent = ch;
+        kap.appendChild(s); return;
+      }
       const h = document.createElement('span'); h.className = 'hane';
       const r = document.createElement('span'); r.className = 'rulo';
-      for (let i = 0; i <= 9; i++){ const s = document.createElement('i'); s.textContent = i; r.appendChild(s); }
+      // iki tam tur + hedefe kadar say
+      for (let t = 0; t < 2; t++)
+        for (let i = 0; i <= 9; i++){ const b = document.createElement('b'); b.textContent = i; r.appendChild(b); }
+      for (let i = 0; i <= +ch; i++){ const b = document.createElement('b'); b.textContent = i; r.appendChild(b); }
       h.appendChild(r); kap.appendChild(h);
-      h.dataset.hedef = k;
+      haneler.push({ r, son: 20 + (+ch) });
     });
-    if (ek){ const s = document.createElement('span'); s.className='ek'; s.textContent = ek; kap.appendChild(s); }
-  };
-  const cevir = kap => {
-    kap.querySelectorAll('.hane').forEach((h,i) => {
-      const r = h.querySelector('.rulo');
-      setTimeout(() => { r.style.transform = `translateY(-${h.dataset.hedef * 10}%)`; }, i * 110);
+    if (ek){ const s = document.createElement('span'); s.className = 'ek'; s.textContent = ek; kap.appendChild(s); }
+    kap._haneler = haneler;
+  }
+
+  function cevir(kap){
+    (kap._haneler || []).forEach((o, i) => {
+      const H = o.r.firstElementChild.getBoundingClientRect().height;
+      if (!H) return;
+      setTimeout(() => { o.r.style.transform = 'translateY(-' + (o.son * H) + 'px)'; }, i * 140);
     });
-  };
+  }
+
   const hepsi = document.querySelectorAll('.odo');
   hepsi.forEach(kur);
-  if (azalt){ hepsi.forEach(cevir); return; }
+
+  if (azalt){
+    hepsi.forEach(k => (k._haneler || []).forEach(o => {
+      const H = o.r.firstElementChild.getBoundingClientRect().height;
+      o.r.style.transition = 'none';
+      o.r.style.transform = 'translateY(-' + (o.son * H) + 'px)';
+    }));
+    return;
+  }
+
   const gz = new IntersectionObserver(gs => {
     gs.forEach(g => { if (g.isIntersecting){ cevir(g.target); gz.unobserve(g.target); } });
-  }, {threshold:.5});
+  }, { threshold: .4 });
   hepsi.forEach(k => gz.observe(k));
 })();
 
