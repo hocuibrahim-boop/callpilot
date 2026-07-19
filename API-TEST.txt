@@ -1,7 +1,14 @@
-zaten var
-TOKEN=0
---- KAYIT (tam veri) ---
-HTTP 401
---- SON HATA ---
+=== KULLANICILAR ===
+1 | yonetici@ornek.com | rol=yonetici | aktif=1 | hash=$2y$12$bj5wF
+2 | ayse@ornek.com | rol=danisman | aktif=1 | hash=$2y$12$cxC6d
+3 | deploytest@callpilot.local | rol=danisman | aktif=1 | hash=$2y$12$7HGiL
+
+=== LOGIN YANITI (ayse) ===
+{"ok":true,"token":"7exUvsiHFL8DoBNAHm60ITM7gle2EZXc","kullanici":{"id":1,"ad":"Y\u00f6netici","rol":"yonetici","office_id":1,"ofis":"Demo Emlak Ofisi"}}
+=== LOGIN YANITI (yonetici) ===
+{"ok":true,"token":"chhxTJrv387Zp6TX1TTGB9YCjdrT3t9o","kullanici":{"id":1,"ad":"Y\u00f6netici","rol":"yonetici","office_id":1,"ofis":"Demo Emlak Ofisi"}}
+=== SON HATALAR ===
+production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.cache_locks' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: update `cache_locks` set `own
+production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.cache_locks' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: update `cache_locks` set `own
 production.ERROR: Call to undefined function App\Http\Controllers\Api\normalizePhone() 
 production.ERROR: Call to undefined function App\Http\Controllers\Api\normalizePhone() 
