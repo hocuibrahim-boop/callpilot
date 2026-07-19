@@ -1,13 +1,13 @@
 tablolar hazir
 
 === GIRIS: ayse ===
-{"ok":true,"token":"733MSC06qdyvUXZAV6g6qGvvIKVWe6ci","kullanici":{"id":2,"ad":"Ay\u015fe Dan\u0131\u015fman","rol":"danisman","office_id":1,"ofis":"Demo Emlak Ofisi"}}
+{"ok":true,"token":"64e8EtldSR18FyiWYP49MilIVFki5DH8","kullanici":{"id":2,"ad":"Ay\u015fe Dan\u0131\u015fman","rol":"danisman","office_id":1,"ofis":"Demo Emlak Ofisi"}}
 token uzunlugu: 32
 
 === MUSTERI KAYIT (uygulamanin gonderdigi tam veri) ===
-{"ok":true,"lead":{"office_id":1,"atanan_user_id":2,"ad_soyad":"Test Musteri","telefon":"05321234567","telefon_normal":"+905321234567","talep_tipi":"satilik_alici","gayrimenkul_turu":"3+1","bolge":"Cankaya","butce":"5M","oncelik":"orta","asama":"yeni","kaynak":"cihaz","updated_at":"2026-07-19T05:58:12.000000Z","created_at":"2026-07-19T05:58:12.000000Z","id":6}}
+{"ok":true,"lead":{"office_id":1,"atanan_user_id":2,"ad_soyad":"Test Musteri","telefon":"05321234567","telefon_normal":"+905321234567","talep_tipi":"satilik_alici","gayrimenkul_turu":"3+1","bolge":"Cankaya","butce":"5M","oncelik":"orta","asama":"yeni","kaynak":"cihaz","updated_at":"2026-07-19T09:51:58.000000Z","created_at":"2026-07-19T09:51:58.000000Z","id":8}}
 
 === YENI HATALAR ===
-production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.cache_locks' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: update `cache_locks` set `own
-production.ERROR: Call to undefined function App\Http\Controllers\Api\normalizePhone() 
-production.ERROR: Call to undefined function App\Http\Controllers\Api\normalizePhone() 
+production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.stage_histories' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `stage_hist
+production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.stage_histories' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `stage_hist
+production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.stage_histories' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `stage_hist
