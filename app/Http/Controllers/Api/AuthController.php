@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Support\Phone;
+
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,7 +25,7 @@ class AuthController extends Controller
         // E-posta veya telefon ile ara
         $user = User::where(function ($q) use ($kullanici) {
             $q->where('eposta', $kullanici)
-              ->orWhere('telefon_normal', normalizePhone($kullanici));
+              ->orWhere('telefon_normal', Phone::normalize($kullanici));
         })->where('aktif', true)->first();
 
         if (!$user || !password_verify($sifre, $user->sifre_hash)) {
@@ -61,15 +63,4 @@ class AuthController extends Controller
             ],
         ]);
     }
-}
-
-function normalizePhone(string $phone): string
-{
-    $digits = preg_replace('/\D/', '', $phone);
-    if (strlen($digits) === 10 && str_starts_with($digits, '0')) {
-        $digits = '90' . substr($digits, 1);
-    } elseif (strlen($digits) === 10) {
-        $digits = '90' . $digits;
-    }
-    return '+' . $digits;
 }

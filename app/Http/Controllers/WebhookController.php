@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Phone;
+
 use App\Models\Call;
 use App\Models\Lead;
 use App\Models\Office;
@@ -46,11 +48,11 @@ class WebhookController extends Controller
         // Dahili numara → kullanıcı eşleştir
         $user = null;
         if ($callee) {
-            $user = User::where('telefon_normal', normalizePhone($callee))->first();
+            $user = User::where('telefon_normal', Phone::normalize($callee))->first();
         }
 
         $telefon = $caller ?? $callee;
-        $telNorm = $telefon ? normalizePhone($telefon) : null;
+        $telNorm = $telefon ? Phone::normalize($telefon) : null;
 
         // Lead eşleştir
         $officeId = $user?->office_id;
@@ -81,15 +83,4 @@ class WebhookController extends Controller
 
         return response()->json(['ok' => true]);
     }
-}
-
-function normalizePhone(string $phone): string
-{
-    $digits = preg_replace('/\D/', '', $phone);
-    if (strlen($digits) === 10 && str_starts_with($digits, '0')) {
-        $digits = '90' . substr($digits, 1);
-    } elseif (strlen($digits) === 10) {
-        $digits = '90' . $digits;
-    }
-    return '+' . $digits;
 }

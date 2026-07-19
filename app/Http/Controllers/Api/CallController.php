@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Support\Phone;
+
 use App\Http\Controllers\Controller;
 use App\Models\Call;
 use App\Models\Lead;
@@ -42,7 +44,7 @@ class CallController extends Controller
             'sure_sn' => 'nullable|integer',
         ]);
 
-        $telNorm = normalizePhone($request->telefon);
+        $telNorm = Phone::normalize($request->telefon);
 
         // Tekilleştir
         if ($request->santral_cagri_id) {
