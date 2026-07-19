@@ -8,15 +8,15 @@
 --- HTTP KOD ---
 200
 --- LOGIN TESTI ---
-{"ok":true,"token":"KkyoZDN1VIsBTPHXMZKVhcz37Ej0pynx","kullanici":{"id":1,"ad":"Y\u00f6netici","rol":"yonetici","office_id":1,"ofis":"Demo Emlak Ofisi"}}
+{"ok":true,"token":"7RDfvwAUgDuUmwQGFi9no9ZLEZXc5ZDQ","kullanici":{"id":1,"ad":"Y\u00f6netici","rol":"yonetici","office_id":1,"ofis":"Demo Emlak Ofisi"}}
 --- HATA MESAJI ---
 production.ERROR: Call to undefined function App
 production.ERROR: Call to undefined function App
 
 --- IZINLER ---
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 05:22 /var/www/callpilot/bootstrap/cache
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 05:22 /var/www/callpilot/storage/framework/views
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 05:22 /var/www/callpilot/storage/logs
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 05:31 /var/www/callpilot/bootstrap/cache
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 05:31 /var/www/callpilot/storage/framework/views
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 05:31 /var/www/callpilot/storage/logs
 
 --- PHP-FPM USER ---
 user = www-data
