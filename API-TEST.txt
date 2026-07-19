@@ -1,4 +1,4 @@
-olusturuldu
+zaten var
 TOKEN=0
 --- KAYIT (tam veri) ---
 HTTP 401
