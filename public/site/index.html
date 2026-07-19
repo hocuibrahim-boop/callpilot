@@ -100,16 +100,16 @@ section{padding:100px 0;position:relative}
 .odo-hucre:last-child{border-right:none}
 .odo{display:inline-flex;align-items:baseline;font-family:var(--disp);font-weight:600;font-size:46px;line-height:1;
   color:var(--gold-3);text-shadow:0 0 26px rgba(242,212,140,.34),0 2px 4px rgba(0,0,0,.3)}
-.odo .hane{height:1em;overflow:hidden;display:inline-block;vertical-align:baseline}
+.odo .hane{height:1.1em;overflow:hidden;display:inline-block;vertical-align:baseline}
 .odo .rulo{display:block;transition:transform 2.1s cubic-bezier(.16,.86,.22,1)}
-.odo .rulo b{display:block;height:1em;line-height:1;font-weight:600;font-family:var(--disp)}
+.odo .rulo b{display:block;height:1.1em;line-height:1.1;font-weight:600;font-family:var(--disp);text-align:center}
 .odo .ek,.odo .sabit{display:inline-block}
 .odo-hucre{padding:38px 22px;text-align:center;border-right:1px solid var(--line-d);transition:.3s}
 .odo-hucre:hover{background:rgba(242,212,140,.045)}
-.odo-l{font-size:12.5px;color:rgba(255,255,255,.6);font-weight:600;margin-top:11px;letter-spacing:.01em}
+.odo-l{font-size:12.5px;color:rgba(255,255,255,.6);font-weight:600;margin-top:11px;letter-spacing:.01em;min-height:2.6em;display:flex;align-items:center;justify-content:center;text-align:center}
 
 /* ══ Telefon ══ */
-.phone-stage{display:flex;justify-content:center;position:relative}
+.phone-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
 .phone-stage::before{content:"";position:absolute;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(232,203,134,.2),transparent 66%);top:46%;left:50%;transform:translate(-50%,-50%)}
 /* gercekci cihaz govdesi */
 .phone{width:302px;height:614px;position:relative;z-index:3;padding:11px;border-radius:50px;
@@ -424,10 +424,8 @@ footer a:hover{color:var(--gold-3)}
 @media (max-width:560px){
   .wrap{padding:0 17px}
   section{padding:56px 0}
-  .phone{transform:scale(.86);transform-origin:top center}
-  .phone-stage{margin-bottom:-84px}
+  .phone{transform:scale(.86);transform-origin:top center;margin-bottom:-89px}
   .phone-stage::before{width:280px;height:280px}
-  .stage-dots{margin-top:-62px;position:relative;z-index:6}
   .odo-grid{grid-template-columns:1fr 1fr}
   .odo{font-size:34px}
   .odo-hucre{padding:24px 12px}
@@ -457,9 +455,7 @@ footer a:hover{color:var(--gold-3)}
 
 @media (max-width:400px){
   .wrap{padding:0 15px}
-  .phone{transform:scale(.78)}
-  .phone-stage{margin-bottom:-134px}
-  .stage-dots{margin-top:-104px}
+  .phone{transform:scale(.78);margin-bottom:-140px}
   .hero h1{font-size:29px}
   .odo{font-size:30px}
   .odo-hucre{padding:20px 8px}
@@ -482,8 +478,7 @@ footer a:hover{color:var(--gold-3)}
 /* ═══════ Yatay tutus (kisa ekran) ═══════ */
 @media (max-height:520px) and (orientation:landscape){
   .hero{padding:34px 0 0}
-  .phone{transform:scale(.7);transform-origin:top center}
-  .phone-stage{margin-bottom:-190px}
+  .phone{transform:scale(.7);transform-origin:top center;margin-bottom:-191px}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -929,6 +924,11 @@ const azalt = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const hepsi = document.querySelectorAll('.odo');
   hepsi.forEach(kur);
 
+  // Yazi tipi gec yuklenirse hane yuksekligi degisir; olcumu ona gore yap
+  const hazir = document.fonts && document.fonts.ready
+    ? document.fonts.ready
+    : Promise.resolve();
+
   // ekran donduruldugunde hane yuksekligi degisir, konumu tazele
   let dz;
   addEventListener('resize', () => {
@@ -945,18 +945,20 @@ const azalt = matchMedia('(prefers-reduced-motion:reduce)').matches;
   });
 
   if (azalt){
-    hepsi.forEach(k => (k._haneler || []).forEach(o => {
+    hazir.then(() => hepsi.forEach(k => (k._haneler || []).forEach(o => {
       const H = o.r.firstElementChild.getBoundingClientRect().height;
       o.r.style.transition = 'none';
       o.r.style.transform = 'translateY(-' + (o.son * H) + 'px)';
-    }));
+    })));
     return;
   }
 
-  const gz = new IntersectionObserver(gs => {
-    gs.forEach(g => { if (g.isIntersecting){ cevir(g.target); gz.unobserve(g.target); } });
-  }, { threshold: .4 });
-  hepsi.forEach(k => gz.observe(k));
+  hazir.then(() => {
+    const gz = new IntersectionObserver(gs => {
+      gs.forEach(g => { if (g.isIntersecting){ cevir(g.target); gz.unobserve(g.target); } });
+    }, { threshold: .4 });
+    hepsi.forEach(k => gz.observe(k));
+  });
 })();
 
 /* ── Telefon akışı ── */
