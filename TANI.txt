@@ -4,19 +4,26 @@
 /var/www/callpilot/public/index.php
 /var/www/callpilot/routes/web.php
 --- ANASAYFA (resolve) ---
-{"app":"CallPilot","status":"ok","version":"1.0"}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CallPilot — Emlakta hiçbir görüşme kaybolmasın</title>
+<meta name="description" content="Emlak danışmanları için çağrı yakalama ve müşteri takip uygulaması. Görüşme biter bitmez kayıt ekranı açılır, 15 saniyede müşteri kaydedilir.">
+<
 --- HTTP KOD ---
 200
 --- LOGIN TESTI ---
-{"ok":true,"token":"OOZZoNKrrdsZL95hXinliwglyShzYu0h","kullanici":{"id":1,"ad":"Y\u00f6netici","rol":"yonetici","office_id":1,"ofis":"Demo Emlak Ofisi"}}
+{"ok":true,"token":"P5fTYAnBRBQeEqGgjqM6UhyLTtlvRlnA","kullanici":{"id":1,"ad":"Y\u00f6netici","rol":"yonetici","office_id":1,"ofis":"Demo Emlak Ofisi"}}
 --- HATA MESAJI ---
-production.ERROR: Call to undefined function App
-production.ERROR: Call to undefined function App
+production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.stage_histories' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `stage_hist
+production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.stage_histories' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `stage_hist
 
 --- IZINLER ---
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 05:58 /var/www/callpilot/bootstrap/cache
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 05:57 /var/www/callpilot/storage/framework/views
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 05:57 /var/www/callpilot/storage/logs
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 09:51 /var/www/callpilot/bootstrap/cache
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 09:51 /var/www/callpilot/storage/framework/views
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 09:51 /var/www/callpilot/storage/logs
 
 --- PHP-FPM USER ---
 user = www-data
