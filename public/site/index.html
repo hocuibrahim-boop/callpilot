@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CallPilot — Emlakta hiçbir görüşme kaybolmasın</title>
+<meta name="description" content="Emlak danışmanları için çağrı yakalama ve müşteri takip uygulaması. Görüşme biter bitmez kayıt ekranı açılır, 15 saniyede müşteri kaydedilir.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{
+  --pine-deep:#0A2A20; --pine:#0F3D2E; --pine-2:#1A5741; --pine-3:#256B51;
+  --pine-soft:#E7F0EB; --pine-line:rgba(255,255,255,.10);
+  --gold:#A67C1A; --gold-2:#C29A3D; --gold-soft:#F6EFDF; --gold-line:#E7D9B8;
+  --paper:#F6F4EE; --card:#FFFFFF; --ink:#15211C; --mut:#6E7C73; --mut-2:#9AA69E;
+  --line:#E4E0D6;
+  --disp:'Fraunces',Georgia,serif; --body:'Manrope',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --wrap:1140px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{max-width:100%}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+:focus-visible{outline:2px solid var(--gold-2);outline-offset:3px;border-radius:4px}
+
+/* ── Üst bar ── */
+.bar{position:sticky;top:0;z-index:60;background:rgba(10,42,32,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--pine-line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-mark{width:36px;height:36px;border-radius:11px;background:linear-gradient(150deg,var(--pine-2),var(--pine));display:grid;place-items:center;border:1px solid rgba(194,154,61,.35)}
+.brand-mark i{color:var(--gold-2);font-size:17px}
+.brand-name{font-family:var(--disp);font-weight:600;font-size:20px;color:#fff;letter-spacing:-.01em}
+.brand-name b{color:var(--gold-2);font-weight:600}
+.bar-nav{display:flex;align-items:center;gap:8px}
+.bar-link{color:rgba(255,255,255,.72);font-size:14px;font-weight:600;padding:9px 14px;border-radius:9px;transition:.2s}
+.bar-link:hover{color:#fff;background:rgba(255,255,255,.07)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--body);font-weight:700;border:none;cursor:pointer;transition:.2s;white-space:nowrap}
+.btn-gold{background:linear-gradient(150deg,var(--gold-2),var(--gold));color:#fff;padding:11px 20px;border-radius:11px;font-size:14px;box-shadow:0 4px 16px rgba(166,124,26,.28)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(166,124,26,.36)}
+.btn-ghost{border:1.5px solid rgba(255,255,255,.28);color:#fff;padding:11px 20px;border-radius:11px;font-size:14px;background:none}
+.btn-ghost:hover{border-color:var(--gold-2);background:rgba(194,154,61,.10)}
+.btn-lg{padding:15px 26px;font-size:15px;border-radius:13px}
+.btn-pine{background:var(--pine);color:#fff;padding:14px 24px;border-radius:12px;font-size:15px}
+.btn-pine:hover{background:var(--pine-2)}
+
+/* ── Hero ── */
+.hero{position:relative;background:var(--pine-deep);color:#fff;overflow:hidden;padding:76px 0 90px}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 900px 500px at 78% 22%,rgba(37,107,81,.42),transparent 65%);pointer-events:none}
+.hero .wrap{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+
+/* kaybolan numaralar */
+.ghosts{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;opacity:.5}
+.ghost{position:absolute;font-family:var(--mono);font-size:13px;color:rgba(255,255,255,.16);white-space:nowrap;animation:drift linear infinite}
+@keyframes drift{
+  0%{transform:translateY(0);opacity:0}
+  12%{opacity:.9}
+  70%{opacity:.35}
+  100%{transform:translateY(-260px);opacity:0}
+}
+
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-2);margin-bottom:22px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-2);opacity:.6}
+.hero h1{font-family:var(--disp);font-weight:600;font-size:clamp(38px,5vw,62px);line-height:1.03;letter-spacing:-.025em;margin-bottom:22px}
+.hero h1 em{font-style:normal;color:var(--gold-2)}
+.hero p.lead{font-size:17.5px;color:rgba(255,255,255,.76);max-width:30em;margin-bottom:32px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:30px}
+.hero-note{display:flex;align-items:center;gap:9px;font-size:13px;color:rgba(255,255,255,.5)}
+.hero-note i{color:var(--gold-2)}
+
+/* ── Telefon (signature) ── */
+.phone-stage{display:flex;justify-content:center;position:relative}
+.phone{width:290px;height:588px;background:var(--paper);border-radius:38px;border:10px solid #08201a;box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.06);position:relative;overflow:hidden}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:98px;height:22px;background:#08201a;border-radius:0 0 13px 13px;z-index:20}
+.status{display:flex;justify-content:space-between;padding:8px 20px 4px;font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--ink)}
+.screen{position:relative;height:calc(100% - 30px)}
+.scene{position:absolute;inset:0;padding:14px;opacity:0;transition:opacity .45s}
+.scene.on{opacity:1}
+
+/* sahne 1 — görüşme */
+.call-live{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:linear-gradient(165deg,var(--pine),var(--pine-deep));margin:-14px;border-radius:0}
+.call-live .ring{width:78px;height:78px;border-radius:50%;background:rgba(255,255,255,.09);display:grid;place-items:center;position:relative;margin-bottom:18px}
+.call-live .ring i{font-size:30px;color:var(--gold-2)}
+.call-live .ring::before{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(194,154,61,.4);animation:pulse 1.5s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.9);opacity:1}100%{transform:scale(1.3);opacity:0}}
+.call-live .num{font-family:var(--mono);font-size:17px;color:#fff;font-weight:600;margin-bottom:6px}
+.call-live .sub{font-size:12.5px;color:rgba(255,255,255,.55)}
+.call-live .timer{margin-top:16px;font-family:var(--mono);font-size:13px;color:var(--gold-2)}
+
+/* sahne 2 — kayıt formu */
+.sheet-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.sheet-title h4{font-family:var(--disp);font-weight:600;font-size:17px;color:var(--pine-deep)}
+.chip-timer{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--gold);background:var(--gold-soft);border:1px solid var(--gold-line);padding:4px 10px;border-radius:99px}
+.sheet-sub{font-family:var(--mono);font-size:11px;color:var(--mut);margin-bottom:13px}
+.fld{background:#fff;border:1px solid var(--line);border-radius:11px;padding:9px 12px;margin-bottom:8px}
+.fld label{display:block;font-size:9.5px;font-weight:800;letter-spacing:.09em;color:var(--mut-2);margin-bottom:2px}
+.fld .val{font-size:13.5px;font-weight:600;color:var(--ink);min-height:19px}
+.fld .val.typing::after{content:"";display:inline-block;width:1.5px;height:14px;background:var(--pine-3);margin-left:2px;vertical-align:-2px;animation:blink .8s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.fld-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pills{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.pill{font-size:11px;font-weight:700;padding:5px 11px;border-radius:99px;border:1.5px solid var(--line);color:var(--mut);background:#fff}
+.pill.on{background:var(--pine);color:#fff;border-color:var(--pine)}
+.save-btn{width:100%;background:var(--pine);color:#fff;border-radius:12px;padding:11px;font-size:14px;font-weight:700;text-align:center;margin-top:2px}
+
+/* sahne 3 — kayıt tamam */
+.done{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:0 22px}
+.done .tick{width:62px;height:62px;border-radius:50%;background:var(--pine-soft);display:grid;place-items:center;margin-bottom:16px;animation:pop .4s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.done .tick i{font-size:28px;color:var(--pine)}
+.done h4{font-family:var(--disp);font-weight:600;font-size:19px;color:var(--pine-deep);margin-bottom:4px}
+.done .meta{font-size:12.5px;color:var(--mut);margin-bottom:16px}
+.done .stamp{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--gold);background:var(--gold-soft);border:1px solid var(--gold-line);padding:6px 14px;border-radius:99px}
+.card-mini{width:100%;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:18px;text-align:left}
+.card-mini .row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.card-mini .nm{font-weight:700;font-size:13.5px}
+.card-mini .bdg{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--gold-soft);color:var(--gold)}
+.card-mini .dt{font-size:11.5px;color:var(--mut)}
+
+/* aşama göstergesi */
+.stage-dots{display:flex;gap:6px;justify-content:center;margin-top:26px}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22);transition:.3s}
+.dot.on{background:var(--gold-2);width:20px;border-radius:99px}
+
+/* ── Genel bölüm ── */
+section{padding:88px 0}
+.sec-head{max-width:660px;margin-bottom:48px}
+.sec-eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.sec-eyebrow::before{content:"";width:24px;height:1px;background:var(--gold-line)}
+h2{font-family:var(--disp);font-weight:600;font-size:clamp(29px,3.6vw,42px);line-height:1.12;letter-spacing:-.02em;color:var(--pine-deep);margin-bottom:16px}
+h2 em{font-style:normal;color:var(--gold)}
+.sec-head p{font-size:16.5px;color:var(--mut)}
+
+/* ── Sorun ── */
+.problem{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.loss-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.loss{padding:26px;border-radius:18px;background:var(--paper);border:1px solid var(--line)}
+.loss .n{font-family:var(--disp);font-weight:600;font-size:40px;line-height:1;color:var(--gold);margin-bottom:10px}
+.loss h3{font-size:15px;font-weight:800;margin-bottom:6px;color:var(--ink)}
+.loss p{font-size:14px;color:var(--mut)}
+
+/* ── Nasıl çalışır ── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--card)}
+.step{padding:34px 28px;border-right:1px solid var(--line);position:relative}
+.step:last-child{border-right:none}
+.step-num{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.1em;margin-bottom:16px}
+.step-ic{width:44px;height:44px;border-radius:13px;background:var(--pine-soft);display:grid;place-items:center;margin-bottom:16px}
+.step-ic i{font-size:20px;color:var(--pine)}
+.step h3{font-family:var(--disp);font-weight:600;font-size:20px;color:var(--pine-deep);margin-bottom:8px}
+.step p{font-size:14.5px;color:var(--mut)}
+
+/* ── Özellikler ── */
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;transition:.22s}
+.feat:hover{border-color:var(--gold-line);transform:translateY(-2px);box-shadow:0 10px 28px rgba(20,40,32,.07)}
+.feat i{font-size:21px;color:var(--pine);margin-bottom:13px;display:block}
+.feat h3{font-size:15.5px;font-weight:800;margin-bottom:6px}
+.feat p{font-size:14px;color:var(--mut)}
+
+/* ── Yönetici şeridi ── */
+.admin{background:var(--pine-deep);color:#fff;position:relative;overflow:hidden}
+.admin::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 700px 400px at 15% 50%,rgba(37,107,81,.35),transparent 60%)}
+.admin .wrap{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.admin h2{color:#fff}
+.admin h2 em{color:var(--gold-2)}
+.admin p{color:rgba(255,255,255,.72);font-size:16.5px;margin-bottom:26px}
+.admin-list{list-style:none;display:grid;gap:13px}
+.admin-list li{display:flex;gap:11px;font-size:15px;color:rgba(255,255,255,.85)}
+.admin-list i{color:var(--gold-2);font-size:17px;flex-shrink:0;margin-top:2px}
+.funnel{background:rgba(255,255,255,.05);border:1px solid var(--pine-line);border-radius:20px;padding:26px}
+.funnel h4{font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2);margin-bottom:20px}
+.fn-row{margin-bottom:14px}
+.fn-top{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:6px;color:rgba(255,255,255,.85)}
+.fn-top span:last-child{font-family:var(--mono);color:var(--gold-2)}
+.fn-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden}
+.fn-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--pine-3),var(--gold-2));width:0;transition:width 1.1s cubic-bezier(.2,.8,.3,1)}
+
+/* ── SSS ── */
+.faq{max-width:800px;margin:0 auto}
+.qa{border-bottom:1px solid var(--line)}
+.qa summary{padding:22px 0;font-size:16px;font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::after{content:"\F282";font-family:'bootstrap-icons';font-size:15px;color:var(--gold);transition:.25s;flex-shrink:0}
+.qa[open] summary::after{transform:rotate(180deg)}
+.qa p{padding:0 0 22px;font-size:15px;color:var(--mut);max-width:64ch}
+
+/* ── Kapanış ── */
+.close-cta{background:var(--card);border-top:1px solid var(--line)}
+.close-inner{text-align:center;max-width:620px;margin:0 auto}
+.close-inner h2{margin-bottom:14px}
+.close-inner p{font-size:17px;color:var(--mut);margin-bottom:30px}
+.close-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* ── Alt ── */
+footer{background:var(--pine-deep);color:rgba(255,255,255,.5);padding:40px 0;font-size:13.5px}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer a:hover{color:var(--gold-2)}
+
+/* ── Beliriş ── */
+.rise{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.rise.seen{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .hero .wrap,.admin .wrap{grid-template-columns:1fr;gap:44px}
+  .phone-stage{order:-1}
+  .loss-grid,.feats{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+  .step{border-right:none;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:none}
+  .bar-link{display:none}
+  section{padding:64px 0}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rise{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="brand-mark"><i class="bi bi-broadcast-pin"></i></span>
+      <span class="brand-name">Call<b>Pilot</b></span>
+    </a>
+    <nav class="bar-nav">
+      <a class="bar-link" href="#nasil">Nasıl çalışır</a>
+      <a class="bar-link" href="#ozellikler">Özellikler</a>
+      <a class="bar-link" href="#sss">Sorular</a>
+      <a class="btn btn-ghost" href="/demo">Demoyu aç</a>
+      <a class="btn btn-gold" href="/indir/CallPilot.apk"><i class="bi bi-android2"></i> İndir</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="ghosts" id="ghosts" aria-hidden="true"></div>
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Emlak ofisleri için</div>
+      <h1>Telefonu kapattınız.<br>Kayıt ekranı <em>zaten açık</em>.</h1>
+      <p class="lead">CallPilot her görüşmenizi yakalar. Numara kayıtlıysa müşteri kartını açar, kayıtlı değilse 15 saniyelik formu getirir. Akşam "kimlerle konuşmuştum" diye düşünmezsiniz.</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold btn-lg" href="/indir/CallPilot.apk"><i class="bi bi-android2"></i> Android uygulamasını indir</a>
+        <a class="btn btn-ghost btn-lg" href="/demo"><i class="bi bi-play-circle"></i> Önce demoyu dene</a>
+      </div>
+      <div class="hero-note"><i class="bi bi-shield-check"></i> Kurulum 2 dakika · Play Store gerekmez · Verileriniz kendi sunucunuzda</div>
+    </div>
+
+    <div class="phone-stage">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="status"><span id="clock">14:32</span><span>▮▮▮ 5G</span></div>
+        <div class="screen">
+
+          <!-- 1: görüşme sürüyor -->
+          <div class="scene on" id="s1">
+            <div class="call-live">
+              <div class="ring"><i class="bi bi-telephone-inbound-fill"></i></div>
+              <div class="num">0532 118 44 90</div>
+              <div class="sub">Gelen arama</div>
+              <div class="timer" id="callTimer">00:12</div>
+            </div>
+          </div>
+
+          <!-- 2: kayıt formu -->
+          <div class="scene" id="s2">
+            <div class="sheet-title">
+              <h4>Hızlı kayıt</h4>
+              <span class="chip-timer" id="formTimer">0 sn</span>
+            </div>
+            <div class="sheet-sub">0532 118 44 90 · 2 dk görüşme</div>
+
+            <div class="fld"><label>AD SOYAD</label><div class="val" id="f1"></div></div>
+            <div class="pills" id="p1">
+              <span class="pill on">Satılık arıyor</span>
+              <span class="pill">Kiralık</span>
+              <span class="pill">Satıcı</span>
+            </div>
+            <div class="fld-row">
+              <div class="fld"><label>BÖLGE</label><div class="val" id="f2"></div></div>
+              <div class="fld"><label>TÜR</label><div class="val" id="f3"></div></div>
+            </div>
+            <div class="fld"><label>BÜTÇE</label><div class="val" id="f4"></div></div>
+            <div class="save-btn">Kaydet</div>
+          </div>
+
+          <!-- 3: kaydedildi -->
+          <div class="scene" id="s3">
+            <div class="done">
+              <div class="tick"><i class="bi bi-check-lg"></i></div>
+              <h4>Kaydedildi</h4>
+              <div class="meta">Müşteri kartı oluşturuldu</div>
+              <div class="stamp"><i class="bi bi-stopwatch"></i> 14 saniye</div>
+              <div class="card-mini">
+                <div class="row1">
+                  <span class="nm">Ahmet Yılmaz</span>
+                  <span class="bdg">Yeni</span>
+                </div>
+                <div class="dt">Etimesgut · Satılık arıyor · 3+1 · 4–6M ₺</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap"><div class="stage-dots" id="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+</div>
+
+<!-- ══ SORUN ══ -->
+<section class="problem">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div class="sec-eyebrow">Tanıdık geldi mi</div>
+      <h2>Gün içinde 20 kişiyle konuşuyorsunuz.<br>Akşam <em>kaçının adını</em> hatırlıyorsunuz?</h2>
+      <p>Emlakta müşteri çoğu zaman rakip yüzünden değil, unutulduğu için kaybedilir. Görüşme biter, araya başka bir iş girer, o numara bir daha aranmaz.</p>
+    </div>
+    <div class="loss-grid">
+      <div class="loss rise">
+        <div class="n">3 gün</div>
+        <h3>Takip düşer</h3>
+        <p>"Bugün ararım" diye ertelenen görüşme, üçüncü günde tamamen unutulur.</p>
+      </div>
+      <div class="loss rise">
+        <div class="n">Not defteri</div>
+        <h3>Dağınık kalır</h3>
+        <p>Kimi ajandada, kimi telefonun notlarında, kimi hiçbir yerde. Ofis olarak tek resim yok.</p>
+      </div>
+      <div class="loss rise">
+        <div class="n">Cevapsız</div>
+        <h3>Geri dönülmez</h3>
+        <p>Toplantıdayken gelen arama listede kaybolur. Müşteri başka ofise gider.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ NASIL ÇALIŞIR ══ -->
+<section id="nasil">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div class="sec-eyebrow">Nasıl çalışır</div>
+      <h2>Danışmanın yapması gereken tek şey: <em>15 saniye</em></h2>
+      <p>Uygulamayı açmak, numarayı kopyalamak, form aramak yok. Telefonu kapattığınız anda süreç zaten başlamış olur.</p>
+    </div>
+    <div class="steps rise">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-ic"><i class="bi bi-telephone-fill"></i></div>
+        <h3>Görüşme biter</h3>
+        <p>CallPilot aramayı arka planda yakalar. Numarayı, süreyi ve yönü kendisi okur.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-ic"><i class="bi bi-window-stack"></i></div>
+        <h3>Ekran açılır</h3>
+        <p>Numara kayıtlıysa müşteri kartı, değilse hızlı kayıt formu gelir. Arama yapmanıza gerek kalmaz.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-ic"><i class="bi bi-stopwatch-fill"></i></div>
+        <h3>15 saniyede kayıt</h3>
+        <p>Ad, talep, bölge, bütçe. Hatırlatma otomatik kurulur. Ekranda sayaç işler.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ÖZELLİKLER ══ -->
+<section id="ozellikler" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <div class="sec-eyebrow">Neler var</div>
+      <h2>Bir görüşmeden satışa kadar <em>tek yerde</em></h2>
+    </div>
+    <div class="feats">
+      <div class="feat rise"><i class="bi bi-record-circle"></i><h3>Otomatik çağrı yakalama</h3><p>Gelen, giden ve cevapsız aramalar kendiliğinden kaydedilir. Elle giriş yok.</p></div>
+      <div class="feat rise"><i class="bi bi-person-vcard"></i><h3>Müşteri kartı</h3><p>Talep, bölge, bütçe, öncelik. Her görüşme kartın zaman çizelgesine işlenir.</p></div>
+      <div class="feat rise"><i class="bi bi-signpost-2"></i><h3>Aşama takibi</h3><p>Yeni, görüşüldü, portföy, randevu, teklif, satış. Nerede kaldığınız hep belli.</p></div>
+      <div class="feat rise"><i class="bi bi-bell"></i><h3>Hatırlatmalar</h3><p>"3 gün sonra ara" dersiniz, o gün telefonunuz size hatırlatır.</p></div>
+      <div class="feat rise"><i class="bi bi-whatsapp"></i><h3>WhatsApp bağlantısı</h3><p>Karttan tek dokunuşla hazır mesaj. Gönderilen mesaj geçmişe yazılır.</p></div>
+      <div class="feat rise"><i class="bi bi-telephone-x"></i><h3>Cevapsız takibi</h3><p>Dönülmemiş aramalar ayrı listede durur, gün sonunda kaybolmaz.</p></div>
+      <div class="feat rise"><i class="bi bi-bar-chart"></i><h3>Yönetici paneli</h3><p>Ofisin günlük tablosu, danışman performansı ve dönüşüm hunisi.</p></div>
+      <div class="feat rise"><i class="bi bi-diagram-3"></i><h3>Santral desteği</h3><p>Ofis santraliniz bağlanır; iPhone kullananların aramaları da düşer.</p></div>
+      <div class="feat rise"><i class="bi bi-shield-lock"></i><h3>Kendi sunucunuz</h3><p>Veriler sizin sunucunuzda kalır. Her müşteri için aydınlatma kaydı tutulur.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ YÖNETİCİ ══ -->
+<section class="admin">
+  <div class="wrap">
+    <div>
+      <div class="sec-eyebrow" style="color:var(--gold-2)">Ofis sahibi için</div>
+      <h2>Ekibin ne yaptığını<br><em>tahmin etmeyin</em></h2>
+      <p>Kaç arama yapıldı, kaçı müşteriye dönüştü, hangi danışmanın takibi düşüyor. Hepsi tek ekranda.</p>
+      <ul class="admin-list">
+        <li><i class="bi bi-check2-circle"></i><span>Bugünün tablosu: arama, yeni müşteri, randevu, satış</span></li>
+        <li><i class="bi bi-check2-circle"></i><span>Danışman performansı ve kayıtsız arama oranı</span></li>
+        <li><i class="bi bi-check2-circle"></i><span>Kaçan fırsatlar: dönülmemiş ve kaydedilmemiş görüşmeler</span></li>
+      </ul>
+    </div>
+    <div class="funnel rise">
+      <h4>Dönüşüm hunisi · bu ay</h4>
+      <div class="fn-row"><div class="fn-top"><span>Arama</span><span>210</span></div><div class="fn-bar"><div class="fn-fill" data-w="100"></div></div></div>
+      <div class="fn-row"><div class="fn-top"><span>Müşteri kaydı</span><span>74</span></div><div class="fn-bar"><div class="fn-fill" data-w="35"></div></div></div>
+      <div class="fn-row"><div class="fn-top"><span>Randevu</span><span>31</span></div><div class="fn-bar"><div class="fn-fill" data-w="15"></div></div></div>
+      <div class="fn-row"><div class="fn-top"><span>Yer gösterimi</span><span>18</span></div><div class="fn-bar"><div class="fn-fill" data-w="9"></div></div></div>
+      <div class="fn-row" style="margin-bottom:0"><div class="fn-top"><span>Satış</span><span>4</span></div><div class="fn-bar"><div class="fn-fill" data-w="4"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SSS ══ -->
+<section id="sss">
+  <div class="wrap">
+    <div class="sec-head rise" style="margin:0 auto 40px;text-align:center">
+      <div class="sec-eyebrow" style="justify-content:center">Sık sorulanlar</div>
+      <h2>Merak edilenler</h2>
+    </div>
+    <div class="faq rise">
+      <details class="qa"><summary>iPhone'da çalışıyor mu?</summary><p>Apple, uygulamaların telefon görüşmelerini okumasına izin vermiyor. Bu yüzden iPhone'da cihaz üzerinden yakalama yapılamaz. Çözüm ofis santralinden geçiyor: santral bağlandığında iPhone kullanan danışmanların aramaları da sisteme düşer. Android tarafında böyle bir kısıt yok.</p></details>
+      <details class="qa"><summary>Play Store'dan mı kuruluyor?</summary><p>Hayır. Kurulum dosyasını buradan indirip telefona kurarsınız. Mağaza onayı beklemeden, ekibinize doğrudan dağıtabilirsiniz. Telefon "bilinmeyen kaynak" uyarısı verirse izin vermeniz yeterli.</p></details>
+      <details class="qa"><summary>Görüşmelerim kaydediliyor mu?</summary><p>Hayır. Ses kaydı alınmaz. Sadece numara, süre ve yön bilgisi tutulur — yani telefonunuzun arama listesinde zaten duran veriler.</p></details>
+      <details class="qa"><summary>Veriler nerede duruyor?</summary><p>Kendi sunucunuzda. Üçüncü bir firmanın bulutunda değil. Her müşteri kaydında KVKK aydınlatma kaydı da tutulur.</p></details>
+      <details class="qa"><summary>Kaç danışman kullanabilir?</summary><p>Sınır yok. Her danışman kendi hesabıyla girer, kendi müşterilerini görür. Yönetici tüm ofisin tablosunu görür.</p></details>
+      <details class="qa"><summary>Pilimi çok harcar mı?</summary><p>Hayır. Uygulama sürekli çalışmaz; sadece bir görüşme bittiğinde birkaç saniye devreye girer. Bazı telefonlarda pil ayarından "kısıtlama yok" seçilmesi gerekebilir, kurulumda gösteriyoruz.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ══ KAPANIŞ ══ -->
+<section class="close-cta">
+  <div class="wrap close-inner">
+    <h2>Bugünkü görüşmeler <em>kaybolmasın</em></h2>
+    <p>Kurulum iki dakika sürüyor. Önce demoyu açıp akışı görün, sonra uygulamayı telefonunuza kurun.</p>
+    <div class="close-btns">
+      <a class="btn btn-pine btn-lg" href="/indir/CallPilot.apk"><i class="bi bi-android2"></i> Uygulamayı indir</a>
+      <a class="btn btn-lg" style="border:1.5px solid var(--line);background:#fff;color:var(--pine)" href="/demo"><i class="bi bi-play-circle"></i> Demoyu aç</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>CallPilot · Emlak çağrı yönetimi</div>
+    <div><a href="/demo">Demo</a> &nbsp;·&nbsp; <a href="/indir/CallPilot.apk">İndir</a></div>
+  </div>
+</footer>
+
+<script>
+// ── Kaybolan numaralar ──
+(function(){
+  const kap = document.getElementById('ghosts');
+  if (!kap || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const ornek = ['0532 118 44 90','0545 667 21 03','0505 902 33 71','0537 210 88 45','0553 776 10 29','0542 887 30 05','0530 118 92 47','0555 210 44 12','0533 641 05 77','0554 902 66 31'];
+  for (let i = 0; i < 16; i++) {
+    const el = document.createElement('span');
+    el.className = 'ghost';
+    el.textContent = ornek[i % ornek.length];
+    el.style.left = (Math.random() * 96) + '%';
+    el.style.top = (55 + Math.random() * 50) + '%';
+    el.style.animationDuration = (13 + Math.random() * 12) + 's';
+    el.style.animationDelay = (-Math.random() * 20) + 's';
+    kap.appendChild(el);
+  }
+})();
+
+// ── Telefon akışı ──
+(function(){
+  const s = [document.getElementById('s1'), document.getElementById('s2'), document.getElementById('s3')];
+  const dots = [...document.querySelectorAll('#dots .dot')];
+  const azalt = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  const alanlar = [
+    ['f1','Ahmet Yılmaz'],
+    ['f2','Etimesgut'],
+    ['f3','3+1'],
+    ['f4','4–6M ₺']
+  ];
+
+  function goster(i){
+    s.forEach((el,k) => el.classList.toggle('on', k === i));
+    dots.forEach((d,k) => d.classList.toggle('on', k === i));
+  }
+
+  function temizle(){
+    alanlar.forEach(([id]) => {
+      const el = document.getElementById(id);
+      el.textContent = '';
+      el.classList.remove('typing');
+    });
+    document.getElementById('formTimer').textContent = '0 sn';
+  }
+
+  function yaz(el, metin, bitti){
+    el.classList.add('typing');
+    let i = 0;
+    const t = setInterval(() => {
+      el.textContent = metin.slice(0, ++i);
+      if (i >= metin.length) {
+        clearInterval(t);
+        el.classList.remove('typing');
+        bitti && bitti();
+      }
+    }, 55);
+  }
+
+  function sirayla(k){
+    if (k >= alanlar.length) return;
+    const [id, metin] = alanlar[k];
+    yaz(document.getElementById(id), metin, () => setTimeout(() => sirayla(k + 1), 260));
+  }
+
+  let sayacT, formT;
+
+  function dongu(){
+    // 1 — görüşme
+    goster(0);
+    temizle();
+    let sn = 8;
+    const tm = document.getElementById('callTimer');
+    clearInterval(sayacT);
+    sayacT = setInterval(() => {
+      sn++;
+      tm.textContent = '00:' + String(sn).padStart(2,'0');
+    }, 300);
+
+    setTimeout(() => {
+      clearInterval(sayacT);
+      // 2 — form
+      goster(1);
+      let f = 0;
+      const ft = document.getElementById('formTimer');
+      clearInterval(formT);
+      formT = setInterval(() => { ft.textContent = (++f) + ' sn'; }, 620);
+      sirayla(0);
+
+      setTimeout(() => {
+        clearInterval(formT);
+        // 3 — tamam
+        goster(2);
+        setTimeout(dongu, 3600);
+      }, 6200);
+    }, 3000);
+  }
+
+  if (azalt) { goster(2); } else { dongu(); }
+})();
+
+// ── Saat ──
+(function(){
+  const el = document.getElementById('clock');
+  const tik = () => {
+    const d = new Date();
+    el.textContent = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  };
+  tik(); setInterval(tik, 20000);
+})();
+
+// ── Beliriş + huni ──
+(function(){
+  const gozlemci = new IntersectionObserver((girisler) => {
+    girisler.forEach(g => {
+      if (!g.isIntersecting) return;
+      g.target.classList.add('seen');
+      g.target.querySelectorAll?.('.fn-fill').forEach(b => {
+        b.style.width = b.dataset.w + '%';
+      });
+      gozlemci.unobserve(g.target);
+    });
+  }, { threshold: 0.16 });
+  document.querySelectorAll('.rise').forEach(el => gozlemci.observe(el));
+})();
+</script>
+</body>
+</html>

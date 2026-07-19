@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CallPilot — Premium Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{
+  --pine:#0F3D2E; --pine2:#1A5741; --pine3:#256B51; --pineSoft:#E7F0EB; --pineDeep:#0A2A20;
+  --gold:#A67C1A; --gold2:#C29A3D; --goldSoft:#F6EFDF; --goldLine:#E7D9B8;
+  --paper:#F6F4EE; --card:#FFFFFF; --ink:#15211C; --mut:#6E7C73; --mut2:#9AA69E;
+  --line:#E9E5DC; --line2:#DCD7CC;
+  --danger:#B0442C; --dangerSoft:#F8EAE5;
+  --disp:'Fraunces',Georgia,serif; --body:'Manrope',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --sh-sm:0 1px 2px rgba(20,40,32,.04),0 1px 3px rgba(20,40,32,.06);
+  --sh-md:0 4px 12px rgba(20,40,32,.06),0 2px 4px rgba(20,40,32,.04);
+  --sh-lg:0 12px 32px rgba(20,40,32,.10),0 4px 8px rgba(20,40,32,.05);
+  --sh-xl:0 32px 64px rgba(10,42,32,.22),0 12px 24px rgba(10,42,32,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--body);background:radial-gradient(ellipse at 50% 0%,#EEEBE2 0%,#E4E1D7 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 12px;color:var(--ink);-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:0;height:0}
+
+/* Brand header above everything */
+.masthead{display:flex;align-items:center;gap:11px;margin-bottom:20px}
+.logo-mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(150deg,var(--pine2),var(--pine));display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-md),inset 0 1px 0 rgba(255,255,255,.12);position:relative}
+.logo-mark i{color:var(--gold2);font-size:20px}
+.logo-mark::after{content:"";position:absolute;inset:0;border-radius:12px;border:1px solid rgba(255,255,255,.08)}
+.wordmark{font-family:var(--disp);font-weight:600;font-size:22px;letter-spacing:-.02em;color:var(--pineDeep)}
+.wordmark b{color:var(--gold)}
+
+/* Mode switch */
+.mode-switch{display:flex;gap:4px;background:var(--card);padding:5px;border-radius:14px;border:1px solid var(--line);margin-bottom:22px;box-shadow:var(--sh-sm)}
+.mode-switch button{border:none;background:none;padding:9px 18px;border-radius:10px;font-weight:700;font-size:13px;color:var(--mut);transition:.22s;display:flex;align-items:center;gap:7px}
+.mode-switch button i{font-size:15px}
+.mode-switch button.active{background:linear-gradient(150deg,var(--pine2),var(--pine));color:#fff;box-shadow:var(--sh-md)}
+
+/* Phone frame */
+.phone{width:392px;max-width:100%;height:824px;background:var(--paper);border-radius:46px;border:11px solid #0D1F19;position:relative;overflow:hidden;box-shadow:var(--sh-xl),inset 0 0 0 1px rgba(255,255,255,.04)}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#0D1F19;border-radius:0 0 16px 16px;z-index:40}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:11px 26px 6px;font-size:12px;font-weight:700;font-family:var(--mono);color:var(--ink)}
+.statusbar .sig{display:flex;gap:5px;align-items:center;font-size:13px}
+.screen{height:calc(100% - 32px);overflow-y:auto;padding-bottom:92px}
+
+/* Banners */
+.banner{position:absolute;left:12px;right:12px;top:34px;z-index:30;border-radius:20px;animation:drop .34s cubic-bezier(.2,.9,.3,1.2)}
+.banner-call{background:linear-gradient(135deg,var(--pine2),var(--pineDeep));color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--sh-lg)}
+.banner-call .pulse{width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;position:relative}
+.banner-call .pulse i{font-size:16px;color:var(--gold2)}
+.banner-call .pulse::before{content:"";position:absolute;inset:-4px;border-radius:14px;border:2px solid rgba(194,154,61,.4);animation:ring 1.4s ease-out infinite}
+@keyframes ring{0%{transform:scale(.85);opacity:1}100%{transform:scale(1.25);opacity:0}}
+.banner-notif{background:var(--card);border:1px solid var(--line);box-shadow:var(--sh-lg);padding:15px 16px;overflow:hidden}
+.banner-notif::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--pine2),var(--gold))}
+@keyframes drop{from{transform:translateY(-24px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* Layout helpers */
+.pad{padding:0 18px 24px}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:6px}
+.eyebrow::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--goldLine),transparent)}
+.sec{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut2);margin:20px 0 9px;display:flex;align-items:center;gap:8px}
+.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+.greet{font-family:var(--disp);font-weight:600;font-size:26px;letter-spacing:-.02em;line-height:1.1;color:var(--pineDeep)}
+.page-title{font-family:var(--disp);font-weight:600;font-size:25px;letter-spacing:-.02em;color:var(--pineDeep)}
+.sub{font-size:12.5px;color:var(--mut);font-weight:500;margin-top:3px}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh-sm)}
+.card-hover{transition:.2s}
+.card-hover:hover{box-shadow:var(--sh-md);transform:translateY(-1px);border-color:var(--line2)}
+
+/* Stat tiles */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:16px}
+.stat{border-radius:18px;padding:14px 13px;position:relative;overflow:hidden;border:1px solid transparent}
+.stat .ic{position:absolute;right:10px;top:11px;font-size:15px;opacity:.5}
+.stat .n{font-family:var(--disp);font-weight:600;font-size:30px;line-height:1;letter-spacing:-.02em}
+.stat .l{font-size:11px;font-weight:600;line-height:1.25;margin-top:6px;color:var(--ink);opacity:.75}
+.stat-pine{background:var(--pineSoft);border-color:#D6E6DD}.stat-pine .n,.stat-pine .ic{color:var(--pine)}
+.stat-gold{background:var(--goldSoft);border-color:var(--goldLine)}.stat-gold .n,.stat-gold .ic{color:var(--gold)}
+.stat-red{background:var(--dangerSoft);border-color:#EFD9D1}.stat-red .n,.stat-red .ic{color:var(--danger)}
+
+/* Rows */
+.row{display:flex;align-items:center;gap:12px;padding:12px 13px;border-radius:16px;margin-bottom:9px}
+.row-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.ri-in{background:var(--pineSoft);color:var(--pine)}
+.ri-out{background:#EAF1F5;color:#3B6B87}
+.ri-miss{background:var(--dangerSoft);color:var(--danger)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.tel{font-family:var(--mono);font-weight:600;font-size:14px;letter-spacing:-.01em}
+.meta{font-size:12px;color:var(--mut);margin-top:2px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+
+/* Buttons */
+.btn{border:none;font-weight:700;transition:.16s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{transform:scale(.97)}
+.btn-pine{background:linear-gradient(150deg,var(--pine2),var(--pine));color:#fff;box-shadow:var(--sh-sm)}
+.btn-pine:hover{box-shadow:var(--sh-md)}
+.btn-gold{background:linear-gradient(150deg,var(--gold2),var(--gold));color:#fff;box-shadow:var(--sh-sm)}
+.btn-red{background:var(--danger);color:#fff}
+.btn-wa{background:#1FAF54;color:#fff}
+.btn-pill{border-radius:999px;padding:8px 15px;font-size:12.5px}
+.btn-ghost{background:none;color:var(--mut);font-weight:600;font-size:12.5px;padding:8px 10px;border-radius:999px}
+.btn-ghost:hover{background:var(--line);color:var(--ink)}
+.btn-out{background:none;border:1.5px solid var(--pine2);color:var(--pine);font-weight:700}
+.icon-btn{width:40px;flex-shrink:0}
+
+/* Chips */
+.chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:5px;scroll-snap-type:x proximity}
+.chip{border:1.5px solid var(--line2);background:var(--card);color:var(--mut);border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:700;white-space:nowrap;transition:.16s;scroll-snap-align:start}
+.chip:hover{border-color:var(--pine3);color:var(--pine)}
+.chip.active{background:linear-gradient(150deg,var(--pine2),var(--pine));color:#fff;border-color:var(--pine)}
+
+/* Badges */
+.badge{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap;letter-spacing:.01em}
+
+/* Tab bar */
+.tabbar{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;padding:10px 0 18px;background:rgba(255,255,255,.86);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;padding:4px 12px;position:relative}
+.tab i{font-size:20px;color:var(--mut2);transition:.18s}
+.tab span{font-size:10.5px;font-weight:700;color:var(--mut2);transition:.18s}
+.tab.active i,.tab.active span{color:var(--pine)}
+.tab.active::before{content:"";position:absolute;top:-11px;width:26px;height:3px;border-radius:999px;background:linear-gradient(90deg,var(--pine2),var(--gold))}
+
+/* Timeline */
+.tl{display:flex;gap:12px;margin-bottom:14px;position:relative}
+.tl:not(:last-child)::before{content:"";position:absolute;left:13px;top:28px;bottom:-14px;width:2px;background:var(--line)}
+.tl-ic{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;z-index:1;box-shadow:0 0 0 3px var(--paper)}
+.tl-body{font-size:13.5px;padding-top:3px}
+.tl-time{font-size:11.5px;color:var(--mut);font-family:var(--mono);margin-top:2px}
+
+/* Overlays / sheets */
+.overlay{position:absolute;inset:0;z-index:50;display:flex;align-items:flex-end;background:rgba(10,30,22,.5);backdrop-filter:blur(3px);animation:fade .2s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{width:100%;padding:20px 18px 22px;border-radius:26px 26px 0 0;background:var(--paper);box-shadow:0 -20px 50px rgba(10,30,22,.3);animation:up .32s cubic-bezier(.2,.9,.3,1.05);max-height:92%;overflow-y:auto}
+.sheet-handle{width:38px;height:4px;border-radius:999px;background:var(--line2);margin:0 auto 14px}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.field{margin-bottom:11px}
+.field label{font-size:11px;font-weight:700;color:var(--mut);display:block;margin-bottom:5px;letter-spacing:.02em}
+.field input,.field select,.field textarea{width:100%;padding:11px 13px;border:1.5px solid var(--line2);border-radius:13px;font-family:var(--body);font-size:14px;color:var(--ink);background:var(--card);outline:none;transition:.16s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pine3);box-shadow:0 0 0 3px rgba(37,107,81,.1)}
+.field input::placeholder{color:var(--mut2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+
+/* Timer badge (signature) */
+.timer{font-family:var(--mono);font-weight:700;font-size:14px;padding:6px 13px;border-radius:999px;background:var(--goldSoft);color:var(--gold);border:1px solid var(--goldLine);display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+
+/* Toast */
+.toast{position:absolute;bottom:88px;left:50%;transform:translateX(-50%);background:var(--pineDeep);color:#fff;padding:11px 18px;border-radius:14px;font-size:13px;font-weight:600;z-index:60;animation:up .3s;white-space:nowrap;max-width:90%;box-shadow:var(--sh-lg);display:flex;align-items:center;gap:8px}
+.toast i{color:var(--gold2)}
+
+/* Detail hero */
+.detail-hero{border-radius:20px;padding:17px;background:linear-gradient(150deg,var(--card),var(--pineSoft));border:1px solid var(--line);position:relative;overflow:hidden}
+.detail-hero::after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(var(--goldSoft),transparent 70%);opacity:.6}
+
+/* Action grid */
+.act-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:16px}
+.act{display:flex;flex-direction:column;align-items:center;gap:6px;padding:13px 6px;border-radius:15px;background:var(--pineSoft);color:var(--pine);border:1px solid #D9E7DF;transition:.16s}
+.act:hover{background:#DDEAE2;transform:translateY(-1px)}
+.act i{font-size:17px}
+.act span{font-size:11px;font-weight:700}
+
+/* Alert strip */
+.alert-strip{margin-top:14px;padding:13px 14px;border-radius:15px;display:flex;align-items:center;gap:11px;font-size:13px;font-weight:600}
+.alert-gold{background:var(--goldSoft);border:1px solid var(--goldLine);color:var(--ink)}
+.alert-gold i{color:var(--gold);font-size:17px}
+
+/* Empty */
+.empty{text-align:center;padding:34px 20px;color:var(--mut)}
+.empty i{font-size:32px;color:var(--mut2);opacity:.5}
+.empty div{font-size:13.5px;margin-top:10px}
+
+/* Manager panel */
+.panel{width:100%;max-width:940px;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:28px;box-shadow:var(--sh-lg)}
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}
+.kpi{border-radius:16px;padding:15px;background:var(--paper);border:1px solid var(--line);position:relative;overflow:hidden}
+.kpi .ic{position:absolute;right:11px;top:12px;font-size:15px;color:var(--mut2);opacity:.6}
+.kpi .n{font-family:var(--disp);font-weight:600;font-size:27px;line-height:1;letter-spacing:-.02em}
+.kpi .l{font-size:11.5px;font-weight:600;color:var(--mut);margin-top:4px}
+.funnel-item{margin-bottom:11px}
+.funnel-top{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:5px}
+.funnel-bar{height:11px;border-radius:999px;background:var(--paper);overflow:hidden}
+.funnel-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--pine3),var(--pine));transition:width .6s}
+.miss-item{display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:13px;margin-bottom:7px;background:var(--paper);border:1px solid var(--line)}
+.miss-item i{font-size:15px}
+.perf-table{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.perf-head,.perf-row{display:grid;grid-template-columns:1.5fr repeat(4,1fr);padding:11px 13px;font-size:12px;align-items:center}
+.perf-head{background:var(--pine);color:#fff;font-weight:700;letter-spacing:.02em}
+.perf-row{border-top:1px solid var(--line)}
+.perf-row:nth-child(even){background:var(--paper)}
+.coach{font-size:12.5px;margin-top:14px;padding:14px;border-radius:14px;background:var(--pineSoft);color:var(--pine);border:1px solid #D6E6DD;display:flex;gap:10px}
+.coach i{font-size:17px;flex-shrink:0}
+.panel-cols{display:grid;gap:22px;margin-top:22px}
+@media(min-width:820px){.kpi-grid{grid-template-columns:repeat(6,1fr)}.panel-cols{grid-template-columns:1fr 1fr}}
+
+.hidden{display:none!important}
+.controls{display:flex;gap:9px;margin-top:22px;flex-wrap:wrap;justify-content:center}
+.hint{font-size:12px;color:var(--mut);margin-top:13px;text-align:center;max-width:392px;line-height:1.5}
+.hint b{color:var(--pine);font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="logo-mark"><i class="bi bi-broadcast-pin"></i></div>
+  <div class="wordmark">Call<b>Pilot</b></div>
+</div>
+
+<div class="mode-switch">
+  <button id="mode-app" class="active" onclick="setMode('app')"><i class="bi bi-phone"></i> Danışman</button>
+  <button id="mode-panel" onclick="setMode('panel')"><i class="bi bi-bar-chart-line"></i> Yönetici</button>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app-view">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="statusbar"><span id="clock">14:32</span><span class="sig"><i class="bi bi-reception-4"></i><i class="bi bi-wifi"></i><i class="bi bi-battery-full"></i></span></div>
+
+    <div id="callBanner" class="banner banner-call hidden">
+      <div class="pulse"><i class="bi bi-telephone-inbound-fill"></i></div>
+      <span class="tel" id="callBannerNo"></span>
+      <span style="font-size:12px;margin-left:auto;opacity:.8">Görüşme sürüyor…</span>
+    </div>
+
+    <div id="notifBanner" class="banner banner-notif hidden">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="row-icon ri-in" style="width:26px;height:26px;border-radius:8px;font-size:13px"><i class="bi bi-telephone-fill"></i></div>
+        <div style="font-size:11px;font-weight:800;color:var(--mut);letter-spacing:.05em">CALLPILOT · ŞİMDİ</div>
+      </div>
+      <div style="font-size:14px;font-weight:700;margin-top:9px;line-height:1.35">
+        <span class="mono" id="notifNo"></span> ile <span id="notifSure"></span> görüştünüz. Kaydetmek ister misiniz?
+      </div>
+      <div style="display:flex;gap:8px;margin-top:11px">
+        <button class="btn btn-pine btn-pill" style="flex:1" onclick="notifKaydet()"><i class="bi bi-person-plus-fill"></i> Kaydet</button>
+        <button class="btn btn-ghost" style="border:1.5px solid var(--line2)" onclick="notifSahsi()">Şahsi</button>
+        <button class="btn btn-ghost" style="border:1.5px solid var(--line2)" onclick="notifSonra()">Sonra</button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen"></div>
+
+    <div class="tabbar">
+      <button class="tab active" data-tab="bugun" onclick="setTab('bugun')"><i class="bi bi-house-door-fill"></i><span>Bugün</span></button>
+      <button class="tab" data-tab="musteriler" onclick="setTab('musteriler')"><i class="bi bi-people-fill"></i><span>Müşteriler</span></button>
+      <button class="tab" data-tab="aramalar" onclick="setTab('aramalar')"><i class="bi bi-card-list"></i><span>Aramalar</span></button>
+      <button class="tab" data-tab="hatirla" onclick="setTab('hatirla')"><i class="bi bi-bell-fill"></i><span>Hatırlat</span></button>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- Quick form -->
+    <div id="formOverlay" class="overlay hidden">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <div style="font-family:var(--disp);font-weight:600;font-size:20px;color:var(--pineDeep)">Hızlı Kayıt</div>
+          <span id="formTimer" class="timer"><i class="bi bi-stopwatch"></i> 0 sn</span>
+        </div>
+        <div style="font-size:12.5px;color:var(--mut);margin-bottom:14px"><span class="mono" id="formNo"></span> · <span id="formSure"></span> görüşme</div>
+        <div class="field"><label>AD SOYAD *</label><input id="f_ad" placeholder="Müşteri adı" autocomplete="off"></div>
+        <div class="grid2">
+          <div class="field"><label>TALEP</label><select id="f_talep"><option>Satılık arıyor</option><option>Kiralık arıyor</option><option>Satıcı</option><option>Kiraya veren</option></select></div>
+          <div class="field"><label>TÜR</label><input id="f_tur" placeholder="Daire 3+1" autocomplete="off"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>BÖLGE</label><input id="f_bolge" placeholder="Çankaya" autocomplete="off"></div>
+          <div class="field"><label>BÜTÇE</label><input id="f_butce" placeholder="4–6M ₺" autocomplete="off"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>ÖNCELİK</label><select id="f_oncelik"><option>Orta</option><option>Yüksek</option><option>Düşük</option></select></div>
+          <div class="field"><label>TEKRAR ARA</label><select id="f_tekrar"><option>Yarın</option><option>3 gün sonra</option><option>Haftaya</option><option>Yok</option></select></div>
+        </div>
+        <div class="field"><label>NOT (OPSİYONEL)</label><input id="f_not" placeholder="Kısa not…" autocomplete="off"></div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-pine" style="flex:1;padding:13px;border-radius:14px;font-size:14.5px" onclick="formKaydet(false)"><i class="bi bi-check-lg"></i> Kaydet</button>
+          <button class="btn btn-wa" style="flex:1;padding:13px;border-radius:14px;font-size:14.5px" onclick="formKaydet(true)"><i class="bi bi-whatsapp"></i> Kaydet + WA</button>
+          <button class="btn btn-ghost" style="border:1.5px solid var(--line2);padding:13px 15px" onclick="formKapat()"><i class="bi bi-x-lg"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WhatsApp -->
+    <div id="waOverlay" class="overlay hidden">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="row-icon" style="background:#DFF4E6;color:#1FAF54"><i class="bi bi-whatsapp"></i></div>
+            <div><div style="font-weight:800;font-size:15px" id="waAd"></div><div class="mono" style="font-size:12px;color:var(--mut)" id="waNo"></div></div>
+          </div>
+          <button class="btn btn-ghost" onclick="waKapat()"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <textarea id="waText" rows="4" style="width:100%;padding:13px;border:1.5px solid var(--line2);border-radius:13px;font-family:var(--body);font-size:14px;resize:none;outline:none"></textarea>
+        <button class="btn btn-wa" style="width:100%;padding:13px;border-radius:14px;margin-top:11px;font-size:15px" onclick="waGonder()"><i class="bi bi-send-fill"></i> WhatsApp'ta Aç</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="controls">
+    <button class="btn btn-pine btn-pill" style="padding:12px 22px;font-size:14px" onclick="simuleEt()"><i class="bi bi-phone-vibrate-fill"></i> Gelen aramayı simüle et</button>
+    <button class="btn btn-ghost btn-pill" style="border:1.5px solid var(--line2);background:var(--card);padding:12px 18px" onclick="sifirla()"><i class="bi bi-arrow-counterclockwise"></i> Sıfırla</button>
+  </div>
+  <div class="hint"><b>Deneyin:</b> aramayı simüle edin → kaydet → 15 sn'de form doldurun → WhatsApp → hatırlatma akışını görün</div>
+</div>
+
+<!-- ===== PANEL ===== -->
+<div id="panel-view" class="hidden">
+  <div class="panel">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">Yönetici Paneli</div>
+        <div style="font-family:var(--disp);font-weight:600;font-size:26px;letter-spacing:-.02em;color:var(--pineDeep)">Yedi Anahtar Emlak</div>
+        <div class="sub">16 Temmuz Perşembe · Bugünün özeti</div>
+      </div>
+      <span class="badge" style="background:var(--goldSoft);color:var(--gold);border:1px solid var(--goldLine)">Örnek veri</span>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi"><i class="bi bi-telephone ic"></i><div class="n" style="color:var(--ink)">34</div><div class="l">Arama</div></div>
+      <div class="kpi"><i class="bi bi-person-plus ic"></i><div class="n" style="color:var(--pine)">11</div><div class="l">Yeni müşteri</div></div>
+      <div class="kpi"><i class="bi bi-exclamation-circle ic"></i><div class="n" style="color:var(--gold)">%21</div><div class="l">Kayıtsız oranı</div></div>
+      <div class="kpi"><i class="bi bi-telephone-x ic"></i><div class="n" style="color:var(--danger)">2</div><div class="l">Dönülmemiş</div></div>
+      <div class="kpi"><i class="bi bi-calendar-check ic"></i><div class="n" style="color:var(--pine)">5</div><div class="l">Randevu</div></div>
+      <div class="kpi"><i class="bi bi-trophy ic"></i><div class="n" style="color:var(--pineDeep)">4</div><div class="l">Satış (ay)</div></div>
+    </div>
+    <div class="panel-cols">
+      <div>
+        <div class="sec"><i class="bi bi-funnel-fill"></i> Dönüşüm hunisi (bu ay)</div>
+        <div id="funnel"></div>
+        <div class="sec"><i class="bi bi-exclamation-triangle-fill"></i> Kaçan fırsatlar</div>
+        <div id="kacan"></div>
+      </div>
+      <div>
+        <div class="sec"><i class="bi bi-people-fill"></i> Danışman performansı</div>
+        <div class="perf-table">
+          <div class="perf-head"><span>Danışman</span><span>Arama</span><span>Kayıt</span><span>Kayıtsız</span><span>Randevu</span></div>
+          <div id="perfRows"></div>
+        </div>
+        <div class="coach"><i class="bi bi-lightbulb-fill"></i><div>Emre B.'nin ortalama dönüş süresi hedefin üzerinde — dönülmemiş cevapsız araması için hatırlatma gönderildi.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ASAMALAR=["Yeni","Görüşüldü","Portföy gönderildi","Randevu / Gösterim","Satış","Kayıp / Ulaşılamadı"];
+const demoNumaralar=["0532 118 44 90","0545 667 21 03","0505 902 33 71","0537 210 88 45","0553 776 10 29"];
+const seedLeads=[
+  {id:1,ad:"Ahmet Yılmaz",telefon:"0532 456 78 90",talep:"Satılık arıyor",tur:"Daire 3+1",bolge:"Etimesgut",butce:"4–6M ₺",oncelik:"Yüksek",asama:"Portföy gönderildi",sonTemas:"09:12",timeline:[{tip:"asama",metin:"Aşama: Görüşüldü → Portföy gönderildi",zaman:"Dün 17:40"},{tip:"whatsapp",metin:"Portföy mesajı gönderildi",zaman:"Dün 17:38"},{tip:"kayit",metin:"12 saniyede kaydedildi",zaman:"Pzt 14:24"},{tip:"arama",metin:"Gelen arama · 4 dk",zaman:"Pzt 14:20"}]},
+  {id:2,ad:"Zeynep Kaya",telefon:"0555 210 44 12",talep:"Kiralık arıyor",tur:"Daire 2+1",bolge:"Çankaya",butce:"50–80B ₺/ay",oncelik:"Orta",asama:"Görüşüldü",sonTemas:"09:40",timeline:[{tip:"arama",metin:"Giden arama · 2 dk",zaman:"Bugün 09:40"},{tip:"kayit",metin:"14 saniyede kaydedildi",zaman:"Cum 11:05"}]},
+  {id:3,ad:"Mehmet Demir",telefon:"0542 887 30 05",talep:"Satıcı",tur:"Villa",bolge:"Beysukent",butce:"—",oncelik:"Orta",asama:"Randevu / Gösterim",sonTemas:"13:26",timeline:[{tip:"hatirlatma",metin:"Hatırlatma: değerleme raporu",zaman:"Dün 17:00"},{tip:"arama",metin:"Giden arama · 5 dk",zaman:"Bugün 13:26"}]},
+  {id:4,ad:"Elif Şahin",telefon:"0530 118 92 47",talep:"Satılık arıyor",tur:"Arsa",bolge:"Sincan",butce:"2–4M ₺",oncelik:"Düşük",asama:"Yeni",sonTemas:"15:03",timeline:[{tip:"kayit",metin:"9 saniyede kaydedildi",zaman:"Bugün 15:04"}]},
+];
+const seedCalls=[
+  {id:11,telefon:"0532 456 78 90",yon:"gelen",saat:"09:12",sure:"4 dk",durum:"kayitli",leadId:1},
+  {id:12,telefon:"0555 210 44 12",yon:"giden",saat:"09:40",sure:"2 dk",durum:"kayitli",leadId:2},
+  {id:13,telefon:"0538 445 11 90",yon:"cevapsiz",saat:"11:20",sure:"—",durum:"beklemede",donuldu:false},
+  {id:14,telefon:"0542 887 30 05",yon:"giden",saat:"13:26",sure:"5 dk",durum:"kayitli",leadId:3},
+];
+const seedReminders=[
+  {id:21,leadId:3,zaman:"Bugün 16:00",not:"Değerleme raporunu ilet",durum:"bekliyor"},
+  {id:22,leadId:1,zaman:"GECİKTİ · 11:00",not:"Portföy dönüşü al",durum:"gecikti"},
+  {id:23,leadId:2,zaman:"Yarın 10:00",not:"Kiralık seçenekleri gönder",durum:"bekliyor"},
+];
+let leads=JSON.parse(JSON.stringify(seedLeads)),calls=JSON.parse(JSON.stringify(seedCalls)),reminders=JSON.parse(JSON.stringify(seedReminders));
+let tab="bugun",detailId=null,idc=100,formCtx=null,waCtx=null,formTimer=null,formSec=0,remOpen=false,q="",filtre="Tümü";
+const nid=()=>++idc;
+const oncelikRenk=(o)=>o==="Yüksek"?"var(--danger)":o==="Orta"?"var(--gold)":"var(--mut2)";
+function asamaStyle(a){if(a==="Yeni")return"background:var(--goldSoft);color:var(--gold)";if(a==="Satış")return"background:var(--pineDeep);color:#fff";if(a==="Kayıp / Ulaşılamadı")return"background:var(--dangerSoft);color:var(--danger)";return"background:var(--pineSoft);color:var(--pine)";}
+const yonCls=(y)=>y==="gelen"?"ri-in":y==="giden"?"ri-out":"ri-miss";
+const yonIco=(y)=>y==="gelen"?"telephone-inbound-fill":y==="giden"?"telephone-outbound-fill":"telephone-x-fill";
+const tlIco=(t)=>({arama:"telephone-fill",whatsapp:"whatsapp",kayit:"stopwatch-fill",asama:"graph-up-arrow",hatirlatma:"bell-fill",not:"sticky-fill"})[t]||"dot";
+const leadOf=(id)=>leads.find(l=>l.id===id);
+function toast(m,ic){const t=document.getElementById('toast');t.innerHTML=`<i class="bi bi-${ic||'check-circle-fill'}"></i>${m}`;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),2600);}
+
+function setMode(m){document.getElementById('app-view').classList.toggle('hidden',m!=='app');document.getElementById('panel-view').classList.toggle('hidden',m!=='panel');document.getElementById('mode-app').classList.toggle('active',m==='app');document.getElementById('mode-panel').classList.toggle('active',m==='panel');if(m==='panel')renderPanel();}
+function setTab(t){tab=t;detailId=null;remOpen=false;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));render();}
+
+function simuleEt(){
+  if(!document.getElementById('callBanner').classList.contains('hidden')||formCtx)return;
+  const no=demoNumaralar.find(n=>!calls.map(c=>c.telefon).includes(n))||demoNumaralar[0];
+  const cb=document.getElementById('callBanner');document.getElementById('callBannerNo').textContent=no;cb.classList.remove('hidden');
+  setTimeout(()=>{cb.classList.add('hidden');const sure=(2+Math.floor(Math.random()*4))+" dk";calls.push({id:nid(),telefon:no,yon:"gelen",saat:"Şimdi",sure,durum:"beklemede"});document.getElementById('notifNo').textContent=no;document.getElementById('notifSure').textContent=sure;document.getElementById('notifBanner').classList.remove('hidden');window._notif={telefon:no,sure};render();},2000);
+}
+function sifirla(){leads=JSON.parse(JSON.stringify(seedLeads));calls=JSON.parse(JSON.stringify(seedCalls));reminders=JSON.parse(JSON.stringify(seedReminders));tab="bugun";detailId=null;idc=100;document.getElementById('notifBanner').classList.add('hidden');formKapat();waKapat();document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab==='bugun'));toast("Demo sıfırlandı","arrow-counterclockwise");render();}
+function notifKaydet(){document.getElementById('notifBanner').classList.add('hidden');formAc(window._notif.telefon,window._notif.sure);}
+function notifSahsi(){const n=window._notif;calls=calls.map(c=>c.telefon===n.telefon&&c.durum==="beklemede"?{...c,durum:"sahsi"}:c);document.getElementById('notifBanner').classList.add('hidden');toast("Şahsi işaretlendi","person-dash-fill");render();}
+function notifSonra(){document.getElementById('notifBanner').classList.add('hidden');toast("30 dk sonra hatırlatılacak","clock-fill");}
+
+function formAc(telefon,sure){formCtx={telefon,sure};['f_ad','f_tur','f_bolge','f_butce','f_not'].forEach(i=>document.getElementById(i).value="");document.getElementById('formNo').textContent=telefon;document.getElementById('formSure').textContent=sure;document.getElementById('formOverlay').classList.remove('hidden');formSec=0;document.getElementById('formTimer').innerHTML='<i class="bi bi-stopwatch"></i> 0 sn';formTimer=setInterval(()=>{formSec++;document.getElementById('formTimer').innerHTML=`<i class="bi bi-stopwatch"></i> ${formSec} sn`;},1000);setTimeout(()=>document.getElementById('f_ad').focus(),100);}
+function formKapat(){formCtx=null;clearInterval(formTimer);document.getElementById('formOverlay').classList.add('hidden');}
+function formKaydet(withWa){const ad=document.getElementById('f_ad').value.trim();if(!ad){document.getElementById('f_ad').focus();toast("Lütfen ad girin","exclamation-circle-fill");return;}clearInterval(formTimer);const id=nid();const tekrar=document.getElementById('f_tekrar').value;const notVal=document.getElementById('f_not').value.trim();const yeni={id,ad,telefon:formCtx.telefon,talep:document.getElementById('f_talep').value,tur:document.getElementById('f_tur').value||"—",bolge:document.getElementById('f_bolge').value||"—",butce:document.getElementById('f_butce').value||"—",oncelik:document.getElementById('f_oncelik').value,asama:"Yeni",sonTemas:"Şimdi",timeline:[...(notVal?[{tip:"not",metin:notVal,zaman:"Şimdi"}]:[]),{tip:"kayit",metin:formSec+" saniyede kaydedildi",zaman:"Şimdi"},{tip:"arama",metin:"Gelen arama · "+formCtx.sure,zaman:"Şimdi"}]};leads.unshift(yeni);calls=calls.map(c=>c.telefon===formCtx.telefon&&c.durum==="beklemede"?{...c,durum:"kayitli",leadId:id}:c);if(tekrar!=="Yok"){const z=tekrar==="Yarın"?"Yarın 10:00":tekrar==="3 gün sonra"?"Cuma 10:00":"Haftaya Pzt 10:00";reminders.push({id:nid(),leadId:id,zaman:z,not:ad+" tekrar aranacak",durum:"bekliyor"});yeni.timeline.unshift({tip:"hatirlatma",metin:"Hatırlatma: "+z,zaman:"Şimdi"});}formKapat();toast(ad+" kaydedildi · "+formSec+" sn","check-circle-fill");render();if(withWa)waAc(yeni);}
+function waAc(lead){waCtx=lead;document.getElementById('waAd').textContent=lead.ad;document.getElementById('waNo').textContent=lead.telefon;document.getElementById('waText').value="Merhaba "+lead.ad.split(" ")[0]+" Bey/Hanım, az önce telefonda görüşmüştük. Size uygun gayrimenkul seçeneklerini hazırlayıp kısa süre içinde paylaşacağım.";document.getElementById('waOverlay').classList.remove('hidden');}
+function waKapat(){waCtx=null;document.getElementById('waOverlay').classList.add('hidden');}
+function waGonder(){if(waCtx){leads=leads.map(l=>l.id===waCtx.id?{...l,timeline:[{tip:"whatsapp",metin:"WhatsApp mesajı gönderildi",zaman:"Şimdi"},...l.timeline]}:l);}waKapat();toast("Mesaj gönderildi","whatsapp");render();}
+function sahsiIsaretle(telefon){calls=calls.map(c=>c.telefon===telefon&&c.durum==="beklemede"?{...c,durum:"sahsi"}:c);toast("Şahsi işaretlendi","person-dash-fill");render();}
+function geriAra(id){calls=calls.map(c=>c.id===id?{...c,donuldu:true}:c);toast("Aranıyor… (simülasyon)","telephone-outbound-fill");render();}
+function acDetay(id){detailId=id;remOpen=false;render();}
+function kapatDetay(){detailId=null;render();}
+function asamaDegis(id,yeni){const l=leadOf(id);if(l.asama===yeni)return;leads=leads.map(x=>x.id===id?{...x,asama:yeni,timeline:[{tip:"asama",metin:"Aşama: "+l.asama+" → "+yeni,zaman:"Şimdi"},...x.timeline]}:x);render();}
+function notEkle(id){const inp=document.getElementById('notinput');const v=inp.value.trim();if(!v)return;leads=leads.map(l=>l.id===id?{...l,timeline:[{tip:"not",metin:v,zaman:"Şimdi"},...l.timeline]}:l);toast("Not eklendi","sticky-fill");render();}
+function toggleRem(){remOpen=!remOpen;render();}
+function hatirlatmaEkle(id,z){const l=leadOf(id);reminders.push({id:nid(),leadId:id,zaman:z,not:l.ad+" aranacak",durum:"bekliyor"});leads=leads.map(x=>x.id===id?{...x,timeline:[{tip:"hatirlatma",metin:"Hatırlatma: "+z,zaman:"Şimdi"},...x.timeline]}:x);remOpen=false;toast("Hatırlatma kuruldu","bell-fill");render();}
+function remTamamla(id){reminders=reminders.filter(r=>r.id!==id);toast("Tamamlandı","check-circle-fill");render();}
+function setQ(v){q=v;renderMusteriler();}
+function setFiltre(f){filtre=f;renderMusteriler();}
+
+function render(){if(detailId){renderDetay();return;}if(tab==="bugun")renderBugun();else if(tab==="musteriler")renderMusteriler();else if(tab==="aramalar")renderAramalar();else renderHatirla();}
+
+function renderBugun(){
+  const beklemede=calls.filter(c=>c.durum==="beklemede"&&c.yon!=="cevapsiz");
+  const donulmemis=calls.filter(c=>c.yon==="cevapsiz"&&!c.donuldu);
+  const gecikmis=reminders.filter(r=>r.durum==="gecikti");
+  const bugunRem=reminders.filter(r=>r.durum==="bekliyor"&&r.zaman.startsWith("Bugün"));
+  let h=`<div class="pad">
+    <div style="padding:18px 0 2px"><div class="eyebrow">Yedi Anahtar Emlak</div>
+    <div class="greet" style="margin-top:8px">İyi günler, Ayşe</div>
+    <div class="sub">16 Temmuz Perşembe</div></div>
+    <div class="stat-grid">
+      <div class="stat stat-pine"><i class="bi bi-bell-fill ic"></i><div class="n">${gecikmis.length+bugunRem.length}</div><div class="l">Bekleyen hatırlatma</div></div>
+      <div class="stat stat-gold"><i class="bi bi-telephone-plus-fill ic"></i><div class="n">${beklemede.length}</div><div class="l">Kayıtsız arama</div></div>
+      <div class="stat stat-red"><i class="bi bi-telephone-x-fill ic"></i><div class="n">${donulmemis.length}</div><div class="l">Dönülmemiş cevapsız</div></div>
+    </div>`;
+  if(beklemede.length){h+=`<div class="sec"><i class="bi bi-telephone-plus-fill"></i> Kayıtsız aramalar</div>`;
+    beklemede.forEach(c=>{h+=`<div class="row card"><div class="row-icon ${yonCls(c.yon)}"><i class="bi bi-${yonIco(c.yon)}"></i></div>
+      <div style="flex:1;min-width:0"><div class="tel">${c.telefon}</div><div class="meta">${c.saat} · ${c.sure}</div></div>
+      <button class="btn btn-ghost" onclick="sahsiIsaretle('${c.telefon}')">Şahsi</button>
+      <button class="btn btn-gold btn-pill" onclick="formAc('${c.telefon}','${c.sure}')"><i class="bi bi-person-plus-fill"></i> Kaydet</button></div>`;});}
+  if(donulmemis.length){h+=`<div class="sec"><i class="bi bi-telephone-x-fill"></i> Cevapsız — geri dönüş bekliyor</div>`;
+    donulmemis.forEach(c=>{h+=`<div class="row" style="background:var(--dangerSoft);border:1px solid #EFD9D1"><div class="row-icon ri-miss"><i class="bi bi-telephone-x-fill"></i></div>
+      <div style="flex:1"><div class="tel">${c.telefon}</div><div class="meta" style="color:var(--danger)">${c.saat} · geri dönüş yapmayı unutmayın</div></div>
+      <button class="btn btn-red btn-pill" onclick="geriAra(${c.id})"><i class="bi bi-arrow-return-left"></i> Geri ara</button></div>`;});}
+  h+=`<div class="sec"><i class="bi bi-bell-fill"></i> Bugünkü hatırlatmalar</div>`;
+  const bh=[...gecikmis,...bugunRem];
+  if(!bh.length)h+=`<div class="empty"><i class="bi bi-check2-circle"></i><div>Bugün için hatırlatma yok.</div></div>`;
+  bh.forEach(r=>{const l=leadOf(r.leadId);const gec=r.durum==="gecikti";h+=`<div class="card" style="padding:13px;margin-bottom:9px;${gec?'border-color:#EFD9D1':''}">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:14px">${l?l.ad:"Müşteri"}</div>
+    <div class="mono" style="font-size:12px;font-weight:700;color:${gec?'var(--danger)':'var(--pine)'}">${gec?'<i class="bi bi-exclamation-circle-fill"></i> ':''}${r.zaman}</div></div>
+    <div class="meta">${r.not}</div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-pine btn-pill" style="flex:1" onclick="toast('Aranıyor…','telephone-outbound-fill')"><i class="bi bi-telephone-fill"></i> Ara</button>
+      ${l?`<button class="btn btn-out btn-pill" style="flex:1" onclick="waAc(leadOf(${l.id}))"><i class="bi bi-whatsapp"></i> WhatsApp</button>`:''}
+      <button class="btn btn-ghost btn-pill" onclick="remTamamla(${r.id})"><i class="bi bi-check-lg"></i></button></div></div>`;});
+  h+=`</div>`;document.getElementById('screen').innerHTML=h;
+}
+
+function renderMusteriler(){
+  const list=leads.filter(l=>(filtre==="Tümü"||l.asama===filtre)&&(l.ad.toLowerCase().includes(q.toLowerCase())||l.telefon.includes(q)||l.bolge.toLowerCase().includes(q.toLowerCase())));
+  let h=`<div class="pad"><div style="padding-top:18px" class="page-title">Müşteriler</div>
+    <div class="row card" style="margin-top:13px;padding:11px 14px;gap:10px">
+      <i class="bi bi-search" style="color:var(--mut)"></i>
+      <input value="${q}" oninput="setQ(this.value)" placeholder="Ad, numara veya bölge ara" style="flex:1;border:none;outline:none;background:none;font-size:14px;font-family:var(--body);color:var(--ink)"></div>
+    <div class="chip-row" style="margin-top:13px">${["Tümü",...ASAMALAR].map(a=>`<button class="chip ${filtre===a?'active':''}" onclick="setFiltre('${a}')">${a}</button>`).join('')}</div>
+    <div style="margin-top:13px">`;
+  if(!list.length)h+=`<div class="empty"><i class="bi bi-inbox"></i><div>Sonuç yok — ilk müşteriyi eklemek için bir aramayı kaydedin.</div></div>`;
+  list.forEach(l=>{h+=`<div class="card card-hover" style="padding:13px;margin-bottom:9px;cursor:pointer" onclick="acDetay(${l.id})">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <div style="display:flex;align-items:center;gap:9px;min-width:0"><span class="dot" style="background:${oncelikRenk(l.oncelik)}"></span><span style="font-weight:700;font-size:14.5px">${l.ad}</span></div>
+      <span class="badge" style="${asamaStyle(l.asama)}">${l.asama}</span></div>
+    <div class="meta" style="margin-top:6px"><i class="bi bi-geo-alt-fill" style="font-size:11px"></i> ${l.bolge} · ${l.talep} · ${l.tur} · ${l.butce}</div>
+    <div class="mono" style="font-size:12px;margin-top:3px;color:var(--mut)">${l.telefon} · son temas ${l.sonTemas}</div></div>`;});
+  h+=`</div></div>`;document.getElementById('screen').innerHTML=h;
+}
+
+function renderDetay(){
+  const d=leadOf(detailId);
+  let h=`<div class="pad">
+    <button style="display:flex;align-items:center;gap:5px;padding-top:18px;font-size:14px;font-weight:700;color:var(--pine);background:none;border:none" onclick="kapatDetay()"><i class="bi bi-chevron-left"></i> Müşteriler</button>
+    <div class="detail-hero" style="margin-top:13px">
+      <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1">
+        <div style="font-family:var(--disp);font-weight:600;font-size:20px;color:var(--pineDeep)">${d.ad}</div>
+        <span class="badge" style="${asamaStyle(d.asama)}">${d.asama}</span></div>
+      <div class="tel" style="color:var(--mut);margin-top:4px;position:relative;z-index:1">${d.telefon}</div>
+      <div style="font-size:12.5px;margin-top:6px;position:relative;z-index:1;color:var(--ink)"><i class="bi bi-geo-alt-fill" style="color:var(--gold)"></i> ${d.bolge} · ${d.talep} · ${d.tur} · ${d.butce}</div></div>
+    <div class="sec"><i class="bi bi-signpost-2-fill"></i> Aşama</div>
+    <div class="chip-row">${ASAMALAR.map(a=>`<button class="chip ${d.asama===a?'active':''}" onclick="asamaDegis(${d.id},'${a}')">${a}</button>`).join('')}</div>
+    <div class="act-grid">
+      <button class="act" onclick="toast('Aranıyor…','telephone-outbound-fill')"><i class="bi bi-telephone-fill"></i><span>Ara</span></button>
+      <button class="act" onclick="waAc(leadOf(${d.id}))"><i class="bi bi-whatsapp"></i><span>WhatsApp</span></button>
+      <button class="act" onclick="document.getElementById('notinput').focus()"><i class="bi bi-pencil-fill"></i><span>Not</span></button>
+      <button class="act" onclick="toggleRem()"><i class="bi bi-bell-fill"></i><span>Hatırlat</span></button></div>`;
+  if(remOpen)h+=`<div class="chip-row" style="margin-top:12px">${["Yarın 10:00","Cuma 10:00","Haftaya Pzt"].map(z=>`<button class="chip" onclick="hatirlatmaEkle(${d.id},'${z}')">${z}</button>`).join('')}</div>`;
+  h+=`<div style="display:flex;gap:8px;margin-top:12px">
+      <input id="notinput" placeholder="Hızlı not yaz…" style="flex:1;padding:11px 13px;border-radius:13px;border:1.5px solid var(--line2);font-size:14px;font-family:var(--body);outline:none">
+      <button class="btn btn-pine icon-btn" style="border-radius:13px" onclick="notEkle(${d.id})"><i class="bi bi-check-lg"></i></button></div>
+    <div class="sec"><i class="bi bi-clock-history"></i> Zaman çizelgesi</div>`;
+  d.timeline.forEach(t=>{h+=`<div class="tl"><div class="tl-ic" style="background:${t.tip==='kayit'?'var(--goldSoft)':'var(--pineSoft)'};color:${t.tip==='kayit'?'var(--gold)':'var(--pine)'}"><i class="bi bi-${tlIco(t.tip)}"></i></div>
+    <div class="tl-body">${t.metin}<div class="tl-time">${t.zaman}</div></div></div>`;});
+  h+=`</div>`;document.getElementById('screen').innerHTML=h;
+}
+
+function renderAramalar(){
+  const beklemede=calls.filter(c=>c.durum==="beklemede"&&c.yon!=="cevapsiz");
+  const gorusme=calls.filter(c=>c.yon!=="cevapsiz").length;
+  let h=`<div class="pad"><div style="padding-top:18px" class="page-title">Aramalar</div>
+    <div class="alert-strip alert-gold"><i class="bi bi-exclamation-triangle-fill"></i><div>Bugün ${gorusme} görüşme · <b>${beklemede.length} numara kaydedilmedi</b></div></div>
+    <div style="margin-top:13px">`;
+  [...calls].reverse().forEach(c=>{const l=c.leadId?leadOf(c.leadId):null;const kirmizi=c.yon==="cevapsiz"&&!c.donuldu;
+    h+=`<div class="row" style="background:${c.durum==="beklemede"?'var(--goldSoft)':'var(--card)'};border:1px solid ${kirmizi?'#EFD9D1':c.durum==="beklemede"?'var(--goldLine)':'var(--line)'}">
+      <div class="row-icon ${yonCls(c.yon)}"><i class="bi bi-${yonIco(c.yon)}"></i></div>
+      <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px;${l?'':'font-family:var(--mono);font-size:14px'}">${l?l.ad:c.telefon}</div>
+      <div class="meta">${c.saat} · ${c.sure}${c.durum==="sahsi"?" · şahsi":""}${l?" · "+c.telefon:""}${c.yon==="cevapsiz"&&c.donuldu?' · dönüldü <i class="bi bi-check-lg"></i>':""}</div></div>`;
+    if(c.durum==="beklemede")h+=`<button class="btn btn-ghost" onclick="sahsiIsaretle('${c.telefon}')">Şahsi</button><button class="btn btn-gold btn-pill" onclick="formAc('${c.telefon}','${c.sure}')">Kaydet</button>`;
+    if(kirmizi)h+=`<button class="btn btn-red btn-pill" onclick="geriAra(${c.id})"><i class="bi bi-arrow-return-left"></i></button>`;
+    h+=`</div>`;});
+  h+=`</div></div>`;document.getElementById('screen').innerHTML=h;
+}
+
+function renderHatirla(){
+  const g=reminders.filter(r=>r.durum==="gecikti"),b=reminders.filter(r=>r.durum==="bekliyor"&&r.zaman.startsWith("Bugün")),d=reminders.filter(r=>r.durum==="bekliyor"&&!r.zaman.startsWith("Bugün"));
+  let h=`<div class="pad"><div style="padding-top:18px" class="page-title">Hatırlatmalar</div>`;
+  [["Gecikmiş",g,"var(--danger)","exclamation-triangle-fill"],["Bugün",b,"var(--pine)","calendar-event-fill"],["Yaklaşan",d,"var(--mut)","calendar3"]].forEach(([bs,gr,rk,ic])=>{
+    h+=`<div class="sec"><i class="bi bi-${ic}"></i> ${bs}</div>`;
+    if(!gr.length)h+=`<div style="font-size:13px;color:var(--mut2);padding:2px 0">—</div>`;
+    gr.forEach(r=>{const l=leadOf(r.leadId);h+=`<div class="card" style="padding:13px;margin-bottom:9px;display:flex;align-items:center;gap:12px">
+      <div class="row-icon" style="background:${rk==='var(--danger)'?'var(--dangerSoft)':'var(--pineSoft)'};color:${rk}"><i class="bi bi-calendar-event-fill"></i></div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:700">${l?l.ad:"Müşteri"} <span style="font-weight:500;color:var(--mut)">· ${r.not}</span></div><div class="mono" style="font-size:12px;font-weight:700;color:${rk}">${r.zaman}</div></div>
+      <button class="btn btn-ghost btn-pill" style="color:var(--pine)" onclick="remTamamla(${r.id})"><i class="bi bi-check-lg"></i></button></div>`;});
+  });
+  h+=`</div>`;document.getElementById('screen').innerHTML=h;
+}
+
+function renderPanel(){
+  const funnel=[["Arama",210,100],["Kayıt",74,35],["Randevu",31,15],["Yer gösterimi",18,9],["Satış",4,4]];
+  document.getElementById('funnel').innerHTML=funnel.map((f,i)=>`<div class="funnel-item"><div class="funnel-top"><span>${f[0]}</span><span class="mono">${f[1]}</span></div><div class="funnel-bar"><div class="funnel-fill" style="width:${Math.max(f[2],3)}%;${i===4?'background:linear-gradient(90deg,var(--gold2),var(--gold))':''}"></div></div></div>`).join('');
+  const kacan=[["0505 333 47 82","Emre B.","cevapsız — 2 saattir dönülmedi","var(--danger)"],["0533 641 05 77","Murat T.","görüşüldü, kaydedilmedi (1 dk)","var(--gold)"],["0554 902 66 31","Ayşe K.","görüşüldü, kaydedilmedi (6 dk)","var(--gold)"]];
+  document.getElementById('kacan').innerHTML=kacan.map(k=>`<div class="miss-item"><i class="bi bi-exclamation-triangle-fill" style="color:${k[3]}"></i><div style="font-size:12px"><b class="mono">${k[0]}</b> · ${k[1]} · ${k[2]}</div></div>`).join('');
+  const perf=[["Ayşe K.",12,6,1,3],["Murat T.",9,2,1,1],["Selin D.",8,2,0,1],["Emre B.",5,1,1,0]];
+  document.getElementById('perfRows').innerHTML=perf.map(r=>`<div class="perf-row"><span style="font-weight:700">${r[0]}</span><span class="mono">${r[1]}</span><span class="mono">${r[2]}</span><span class="mono" style="color:${r[3]>0?'var(--gold)':'var(--ink)'}">${r[3]}</span><span class="mono">${r[4]}</span></div>`).join('');
+}
+
+function tick(){const d=new Date();document.getElementById('clock').textContent=String(d.getHours()).padStart(2,'0')+":"+String(d.getMinutes()).padStart(2,'0');}
+tick();setInterval(tick,10000);render();
+</script>
+</body>
+</html>
