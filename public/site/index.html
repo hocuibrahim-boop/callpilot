@@ -366,6 +366,7 @@ footer a:hover{color:var(--gold-3)}
   .step{border-right:none;border-bottom:1px solid var(--line)}
   .step:last-child{border-bottom:none}
   .bar-link{display:none}
+  .bar-nav{gap:8px}
   .roi{grid-template-columns:1fr;text-align:center;gap:16px}
   .roi-fig{font-size:48px}
   section{padding:76px 0}
@@ -472,6 +473,10 @@ footer a:hover{color:var(--gold-3)}
   .btn-sm{min-height:38px}
   .toggle button{min-height:44px}
   .qa summary{min-height:52px}
+}
+/* Menu linkleri yalnizca genis ekranda gorunur; dokunmatik
+   tabletlerde dokunma hedefi buyutulur ama mobilde acilmaz. */
+@media (pointer:coarse) and (min-width:981px){
   .bar-link{min-height:44px;display:flex;align-items:center}
 }
 
