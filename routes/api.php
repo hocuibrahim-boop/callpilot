@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BasvuruController;
 use App\Http\Controllers\Api\CallController;
 use App\Http\Controllers\Api\DeviceController;
 use App\Http\Controllers\Api\LeadController;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 // Public
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/basvuru', [BasvuruController::class, 'store']);
 
 // Verimor Webhook (secret ile korunuyor)
 Route::post('/webhook/verimor', [WebhookController::class, 'verimor'])
