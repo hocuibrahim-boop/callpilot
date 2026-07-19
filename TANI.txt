@@ -15,15 +15,15 @@
 --- HTTP KOD ---
 200
 --- LOGIN TESTI ---
-{"ok":true,"token":"9RX2oPJm6abfRzNwN8z4HKopxOQ2trvf","kullanici":{"id":1,"ad":"Y\u00f6netici","rol":"yonetici","office_id":1,"ofis":"Demo Emlak Ofisi"}}
+{"ok":true,"token":"mrCEH2sXDK2NPyGGP8LxQvcew5JBJ462","kullanici":{"id":1,"ad":"Y\u00f6netici","rol":"yonetici","office_id":1,"ofis":"Demo Emlak Ofisi"}}
 --- HATA MESAJI ---
 production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.stage_histories' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `stage_hist
 production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.stage_histories' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `stage_hist
 
 --- IZINLER ---
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 11:20 /var/www/callpilot/bootstrap/cache
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 11:20 /var/www/callpilot/storage/framework/views
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 11:20 /var/www/callpilot/storage/logs
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 11:29 /var/www/callpilot/bootstrap/cache
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 11:29 /var/www/callpilot/storage/framework/views
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 11:29 /var/www/callpilot/storage/logs
 
 --- PHP-FPM USER ---
 user = www-data
