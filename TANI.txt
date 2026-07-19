@@ -11,19 +11,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CallPilot — Emlakta hiçbir görüşme kaybolmasın</title>
 <meta name="description" content="Emlak ofisleri için çağrı yakalama ve müşteri takip sistemi. Görüşme biter bitmez kayıt ekranı açılır, 15 saniyede müşteri kaydedilir.">
-<link rel="p
+<meta name="
 --- HTTP KOD ---
 200
 --- LOGIN TESTI ---
-{"ok":true,"token":"B4FRLF8OffxxUU4qjLtooeAPxas4aUdo","kullanici":{"id":1,"ad":"Y\u00f6netici","rol":"yonetici","office_id":1,"ofis":"Demo Emlak Ofisi"}}
+{"ok":true,"token":"N2uOfpCGV74h4WF9N6pqEH8SsCvMF2pa","kullanici":{"id":1,"ad":"Y\u00f6netici","rol":"yonetici","office_id":1,"ofis":"Demo Emlak Ofisi"}}
 --- HATA MESAJI ---
 production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.stage_histories' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `stage_hist
 production.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'callpilot.stage_histories' doesn't exist (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: callpilot, SQL: select * from `stage_hist
 
 --- IZINLER ---
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 10:36 /var/www/callpilot/bootstrap/cache
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 10:36 /var/www/callpilot/storage/framework/views
-drwxrwxr-x 2 www-data www-data 4096 Jul 19 10:36 /var/www/callpilot/storage/logs
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 10:48 /var/www/callpilot/bootstrap/cache
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 10:48 /var/www/callpilot/storage/framework/views
+drwxrwxr-x 2 www-data www-data 4096 Jul 19 10:48 /var/www/callpilot/storage/logs
 
 --- PHP-FPM USER ---
 user = www-data
