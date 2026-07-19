@@ -22,14 +22,23 @@ class AuthController extends Controller
         $kullanici = trim($request->kullanici);
         $sifre     = $request->sifre;
 
-        // E-posta veya telefon ile ara
-        $user = User::where(function ($q) use ($kullanici) {
-            $q->where('eposta', $kullanici)
-              ->orWhere('telefon_normal', Phone::normalize($kullanici));
-        })->where('aktif', true)->first();
+        // Telefonla giris denemesi icin numarayi bicimle.
+        // E-posta girildiginde null doner; null'i sorguya KOYMAMAK
+        // kritik, cunku Laravel null'i "IS NULL"a cevirir ve
+        // telefonu bos olan ilk kullaniciyi dondururdu.
+        $telefon = Phone::normalize($kullanici);
 
-        if (!$user || !password_verify($sifre, $user->sifre_hash)) {
-            return response()->json(['ok' => false, 'hata' => 'Hatalı kullanıcı veya şifre'], 401);
+        $user = User::where('aktif', true)
+            ->where(function ($q) use ($kullanici, $telefon) {
+                $q->where('eposta', $kullanici);
+                if ($telefon !== null) {
+                    $q->orWhere('telefon_normal', $telefon);
+                }
+            })
+            ->first();
+
+        if (!$user || empty($user->sifre_hash) || !password_verify($sifre, $user->sifre_hash)) {
+            return response()->json(['ok' => false, 'hata' => 'Hatali kullanici veya sifre'], 401);
         }
 
         // Her girişte yeni token
