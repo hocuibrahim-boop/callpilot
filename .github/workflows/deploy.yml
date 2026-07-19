@@ -80,6 +80,11 @@ jobs:
             echo '=== KURULUM TAMAM ===' && \
             curl -sk -H 'Host: arama.dasakademi.com' https://127.0.0.1/ 2>&1 | head -c 150"
 
+      - name: Super admin hesabi
+        run: |
+          ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "cd /var/www/callpilot && php artisan callpilot:superadmin 'admin@callpilot.com' 'CallPilot2026!' 2>&1 | tail -2"
+
       - name: Cron kur (hatirlatmalar)
         run: |
           ssh -o BatchMode=yes -i ~/.ssh/id_ed25519 "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \

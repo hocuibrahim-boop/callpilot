@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BasvuruController;
 use App\Http\Controllers\Api\CallController;
@@ -53,4 +54,15 @@ Route::middleware(\App\Http\Middleware\ApiTokenAuth::class)->group(function () {
     Route::get('/panel/danismanlar', [PanelController::class, 'danismanlar']);
     Route::get('/panel/huni', [PanelController::class, 'huni']);
     Route::get('/panel/kacan', [PanelController::class, 'kacan']);
+
+    // ————— Super admin —————
+    Route::middleware(\App\Http\Middleware\SuperAdminOnly::class)->prefix('admin')->group(function () {
+        Route::get('/ozet', [AdminController::class, 'ozet']);
+        Route::get('/basvurular', [AdminController::class, 'basvurular']);
+        Route::patch('/basvurular/{basvuru}', [AdminController::class, 'basvuruGuncelle']);
+        Route::post('/basvurular/{basvuru}/hesap-ac', [AdminController::class, 'hesapAc']);
+        Route::get('/ofisler', [AdminController::class, 'ofisler']);
+        Route::get('/kullanicilar', [AdminController::class, 'kullanicilar']);
+        Route::patch('/kullanicilar/{user}', [AdminController::class, 'kullaniciGuncelle']);
+    });
 });

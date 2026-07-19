@@ -21,6 +21,11 @@ Route::get('/indir/CallPilot.apk', function () {
     ]);
 });
 
+// Yonetim paneli
+Route::get('/panel', function () {
+    return response()->file(public_path('site/panel.html'));
+});
+
 // Servis durumu (eski ana sayfa yaniti)
 Route::get('/durum', function () {
     return response()->json(['app' => 'CallPilot', 'status' => 'ok', 'version' => '1.0']);
