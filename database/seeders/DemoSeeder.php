@@ -38,6 +38,18 @@ class DemoSeeder extends Seeder
             'aktif'       => true,
         ]);
 
+        // Deploy testleri icin ayri hesap - gercek kullanicilarin
+        // oturumunu dusurmemesi icin bagimsiz tutulur
+        User::create([
+            'office_id'  => $office->id,
+            'rol'        => 'danisman',
+            'ad'         => 'Deploy Test',
+            'eposta'     => 'deploytest@callpilot.local',
+            'sifre_hash' => password_hash('DeployTest2026', PASSWORD_DEFAULT),
+            'api_token'  => Str::random(32),
+            'aktif'      => true,
+        ]);
+
         $this->command->info('Demo veriler oluşturuldu:');
         $this->command->info('  yonetici@ornek.com / parola123');
         $this->command->info('  ayse@ornek.com / parola123');
